@@ -17,6 +17,9 @@ export class UserEntity {
   @ApiProperty({ description: 'The id of the activity slide', nullable: false })
   id: string;
 
+  @Column({name: 'remember_token'})
+  rememberToken: string
+
   @Column({ name: 'name' })
   @ApiProperty({ description: 'Name of user', nullable: false })
   name: string;

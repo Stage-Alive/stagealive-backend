@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/swagger": "^4.5.3",
     "@nestjs/typeorm": "^7.0.0",
+    "class-validator": "^0.12.2",
     "mysql": "^2.18.1",
     "pg": "^8.0.3",
     "postgres": "^1.0.2",

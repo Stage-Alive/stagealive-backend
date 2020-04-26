@@ -9,7 +9,6 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { PublicGroupInterface } from './public-group.interface';
-import { RegionEntity } from 'src/region/region.entity';
 
 @Injectable()
 export class PublicGroupService {
@@ -66,26 +65,26 @@ export class PublicGroupService {
     }
   }
 
-  //   async update(
-  //     id: string,
-  //     body: Partial<RegionInterface>,
-  //   ): Promise<RegionEntity> {
-  //     try {
-  //       let result = await this.regionRepository.findOneOrFail(id);
-  //       return await this.regionRepository.save(
-  //         await this.regionRepository.merge(result, body),
-  //       );
-  //     } catch (error) {
-  //       throw new InternalServerErrorException(error);
-  //     }
-  //   }
+  async update(
+    id: string,
+    body: Partial<PublicGroupInterface>,
+  ): Promise<PublicGroupEntity> {
+    try {
+      let result = await this.publicGroupRepository.findOneOrFail(id);
+      return await this.publicGroupRepository.save(
+        await this.publicGroupRepository.merge(result, body),
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 
-  //     async delete(id: string): Promise<boolean> {
-  //       try {
-  //         const result = await this.regionRepository.softDelete(id);
-  //         return result.raw.affectedRows > 0;
-  //       } catch (error) {
-  //         throw new InternalServerErrorException(error);
-  //       }
-  //     }
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.publicGroupRepository.softDelete(id);
+      return result.raw.affectedRows > 0;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

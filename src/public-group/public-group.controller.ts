@@ -1,11 +1,13 @@
-import { Body, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { Body, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, Controller } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { RestorePublicGroupDto } from './dtos/restore-public-group.dto';
 import { StorePublicGroupDto } from './dtos/store-public-group.dto';
 import { UpdatePublicGroupDto } from './dtos/update-public-group.dto';
 import { PublicGroupService } from './public-group.service';
 
+@Controller('public-groups')
+@ApiTags('public-groups')
 export class PublicGroupController {
   constructor(private readonly publicGroupService: PublicGroupService) {}
 
@@ -14,8 +16,8 @@ export class PublicGroupController {
     const result = await this.publicGroupService.paginate(query);
 
     return {
-      message: 'Show a list of region',
-      object: 'Region',
+      message: 'Show a list of public group',
+      object: 'public group',
       url: req.url,
       data: result,
     };
@@ -60,8 +62,8 @@ export class PublicGroupController {
     const result = await this.publicGroupService.update(id, body);
 
     return {
-      message: 'Update an region',
-      object: 'Region',
+      message: 'Update a public group',
+      object: 'public group',
       url: req.url,
       data: result,
     };
@@ -86,13 +88,13 @@ export class PublicGroupController {
 
   @Post('restore')
   @ApiResponse({ status: 400, description: 'Invalid fields' })
-  @ApiResponse({ status: 404, description: 'Region not found' })
+  @ApiResponse({ status: 404, description: 'Public not found' })
   async restore(@Body() body: RestorePublicGroupDto, @Req() req) {
     const result = await this.publicGroupService.restore(body.id);
 
     return {
-      message: 'Restore a removed region',
-      object: 'Region',
+      message: 'Restore a removed public group',
+      object: 'Public group',
       url: req.url,
       data: result,
     };

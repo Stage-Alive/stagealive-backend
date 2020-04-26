@@ -40,6 +40,19 @@ export class UserService {
     }
   }
 
+  private async checkEmailOwner(id: string, email: string) {
+    const user = await this.userRepository
+      .createQueryBuilder('users')
+      .where('users.id = :id', { id: id })
+      .andWhere('users.email = :email', { email: email })
+      .getOne();
+
+    if (!user) {
+      return true;
+    }
+    return false;
+  }
+
   async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.findOneOrFail(id);

@@ -9,6 +9,7 @@ import {
   Put,
   Req,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -62,7 +63,7 @@ export class UserController {
     };
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiResponse({ status: 201, description: 'Store a user' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async update(

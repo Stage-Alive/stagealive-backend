@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
+import { RegionModule } from './region/region.module';
+import { PublicGroupModule } from './public-group/public-group.module';
 
 @Module({
   imports: [
@@ -12,6 +14,8 @@ import { UserTypeModule } from './usertype/usertype.module';
     TypeOrmModule.forRoot(),
     UserModule,
     UserTypeModule,
+    RegionModule,
+    PublicGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

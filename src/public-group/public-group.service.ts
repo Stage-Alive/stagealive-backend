@@ -43,21 +43,26 @@ export class PublicGroupService {
 
   async destroy(id: string) {
     try {
+      const group = await (await this.publicGroupRepository.findOneOrFail(id))
+        .group;
+      const resultGroup = await this.groupService.destroy(group.id);
       const result = await this.publicGroupRepository.softDelete(id);
-      const resultGroup = await this.groupService.destroyByPublicGroupId(id);
       return result.raw.affectedRows > 0 && resultGroup;
     } catch (error) {
+      await this.restore(id);
+      await this.groupService.restore(id);
       throw new InternalServerErrorException(error);
     }
   }
 
   async store(body: Partial<PublicGroupInterface>): Promise<PublicGroupEntity> {
     try {
-      const name = body.name;
-      const groupEntity = await this.groupService.create(name);
+      const groupEntity = await this.groupService.create(body);
+      console.log('groupEntity ', groupEntity);
 
       const publicGroupEntity = await this.publicGroupRepository.create(body);
       publicGroupEntity.group = groupEntity;
+      console.log('aqui');
 
       return await this.publicGroupRepository.save(publicGroupEntity);
     } catch (error) {

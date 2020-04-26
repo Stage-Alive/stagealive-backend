@@ -1,4 +1,15 @@
-import { Body, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, Controller } from '@nestjs/common';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  Controller,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { RestorePublicGroupDto } from './dtos/restore-public-group.dto';
@@ -6,8 +17,8 @@ import { StorePublicGroupDto } from './dtos/store-public-group.dto';
 import { UpdatePublicGroupDto } from './dtos/update-public-group.dto';
 import { PublicGroupService } from './public-group.service';
 
-@Controller('public-groups')
-@ApiTags('public-groups')
+@Controller('publicgroups')
+@ApiTags('publicgroups')
 export class PublicGroupController {
   constructor(private readonly publicGroupService: PublicGroupService) {}
 

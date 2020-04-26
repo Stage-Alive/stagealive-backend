@@ -14,4 +14,8 @@ export class StoreUserDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'The type of user', nullable: false })
   userTypeId: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ description: 'The password of user', nullable: false })
+  password: string;
 }

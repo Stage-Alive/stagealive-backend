@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
 import { RegionModule } from './region/region.module';
 import { PublicGroupModule } from './public-group/public-group.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -16,8 +17,10 @@ import { PublicGroupModule } from './public-group/public-group.module';
     UserTypeModule,
     RegionModule,
     PublicGroupModule,
+    GroupModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+

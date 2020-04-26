@@ -7,9 +7,12 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserTypeEntity } from 'src/usertype/usertype.entity';
+import { createHmac } from 'crypto';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -20,11 +23,11 @@ export class UserEntity {
   @Column({ name: 'remember_token', nullable: true, default: null })
   rememberToken: string;
 
-  @Column({ name: 'name' })
+  @Column({ name: 'name' , type: 'varchar', length: 255})
   @ApiProperty({ description: 'Name of user', nullable: false })
   name: string;
 
-  @Column({ name: 'email', nullable: false, unique: true })
+  @Column({ name: 'email', nullable: false, unique: true , type: 'varchar', length: 255})
   @ApiProperty({ description: 'Email of user', nullable: false })
   email: string;
 
@@ -50,4 +53,15 @@ export class UserEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
+
+  @Column({ select: false, type: 'varchar', length: 255 })
+  password: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  hashPassword() {
+    if (this.password) {
+      this.password = createHmac('sha256', this.password).digest('hex');
+    }
+  }
 }

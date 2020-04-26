@@ -16,7 +16,7 @@ export class RegionEntity {
   @ApiProperty({ description: 'The id of region', nullable: false })
   id: string;
 
-  @Column({ name: 'region' })
+  @Column({ name: 'region', length:2, type: "varchar" })
   @ApiProperty({ description: 'Region', nullable: false })
   region: string;
 

@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { UserTypeEntity } from 'src/usertype/usertype.entity';
 
-@Entity({ name: 'users', orderBy: { order: 'ASC' } })
+@Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({ description: 'The id of the activity slide', nullable: false })
@@ -24,7 +24,7 @@ export class UserEntity {
   @ApiProperty({ description: 'Name of user', nullable: false })
   name: string;
 
-  @Column({ name: 'email' })
+  @Column({ name: 'email', nullable: false, unique: true })
   @ApiProperty({ description: 'Email of user', nullable: false })
   email: string;
 

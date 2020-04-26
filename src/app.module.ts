@@ -4,14 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { UsertypeController } from './usertype/usertype.controller';
+import { UserTypeModule } from './usertype/usertype.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(),
     UserModule,
-
+    UserTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

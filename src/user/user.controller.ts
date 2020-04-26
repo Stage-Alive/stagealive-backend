@@ -8,17 +8,31 @@ import {
   Post,
   Put,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { StoreUserDto } from "./dto/StoreUserDto";
-import { UpdateUserDto } from './dto/update-user.dto'; 
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { RestoreUserDto } from './dto/restore-user.dto';
+import { StoreUserDto } from './dto/store-user.dto';
+import { IndexQueryDto } from './dto/index-query.dto';
 
 @Controller('users')
 @ApiTags('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  async index(@Req() req, @Query() query?: IndexQueryDto) {
+    const result = await this.userService.paginate(query);
+
+    return {
+      message: 'Show a list of users',
+      object: 'User',
+      url: req.url,
+      data: result,
+    };
+  }
 
   @Get(':id')
   @ApiResponse({ status: 201, description: 'Get an user' })

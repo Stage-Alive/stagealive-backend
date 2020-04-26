@@ -2,7 +2,12 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UserInterface } from './user.interface';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindConditions } from 'typeorm';
+import { Repository } from 'typeorm';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -25,7 +30,6 @@ export class UserService {
     }
   }
 
-
   async store(body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.create(body);
@@ -36,10 +40,7 @@ export class UserService {
     }
   }
 
-  async update(
-    id: string,
-    body: Partial<UserInterface>,
-  ): Promise<UserEntity> {
+  async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.findOneOrFail(id);
       user = await this.userRepository.merge(user, body);
@@ -66,5 +67,11 @@ export class UserService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async paginate(
+    options: IPaginationOptions = { page: 1, limit: 10 },
+  ): Promise<Pagination<UserEntity>> {
+    return await paginate<UserEntity>(this.userRepository, options);
   }
 }

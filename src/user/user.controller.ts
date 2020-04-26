@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { StoreUserDto } from './dto/store-user.dto';
+import { StoreUserDto } from "./dto/StoreUserDto";
 import { UpdateUserDto } from './dto/update-user.dto'; 
 import { UserService } from './user.service';
 import { RestoreUserDto } from './dto/restore-user.dto';

@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { UserEntity } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntity } from 'src/user/user.entity';
 
 @Entity('user_types')
 export class UserTypeEntity {

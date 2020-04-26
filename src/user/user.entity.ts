@@ -9,7 +9,7 @@ import {
   Column,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserTypeEntity } from './usertype.entity';
+import { UserTypeEntity } from 'src/usertype/usertype.entity';
 
 @Entity({ name: 'users', orderBy: { order: 'ASC' } })
 export class UserEntity {
@@ -17,8 +17,8 @@ export class UserEntity {
   @ApiProperty({ description: 'The id of the activity slide', nullable: false })
   id: string;
 
-  @Column({name: 'remember_token'})
-  rememberToken: string
+  @Column({ name: 'remember_token', nullable: true, default: null })
+  rememberToken: string;
 
   @Column({ name: 'name' })
   @ApiProperty({ description: 'Name of user', nullable: false })
@@ -29,15 +29,15 @@ export class UserEntity {
   email: string;
 
   @ManyToOne(
-      () => UserTypeEntity,
-      userEntity => userEntity.users,
+    () => UserTypeEntity,
+    userEntity => userEntity.users,
   )
-  @JoinColumn({name: 'user_type_id', referencedColumnName: 'id'})   
-  userType: UserTypeEntity
+  @JoinColumn({ name: 'user_type_id', referencedColumnName: 'id' })
+  userType: UserTypeEntity;
 
-  @Column({name: 'user_type_id', type:'uuid'})
+  @Column({ name: 'user_type_id', type: 'uuid' })
   @ApiProperty({ description: 'The id of the type', nullable: false })
-  userTypeId: string
+  userTypeId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

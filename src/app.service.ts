@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigConst } from './constant/config.const';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  healthCheck() {
+    return {
+      message: ConfigConst.MSG_HEALTH,
+      version: ConfigConst.API_VERSION,
+    };
   }
 }

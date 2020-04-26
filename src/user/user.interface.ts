@@ -1,7 +1,9 @@
+export interface UserInterface {
+  name: string;
 
-export interface UserInterface{
-    
-    name: string
+  email: string;
 
-    email: string
+  userTypeId: string;
+
+
 }

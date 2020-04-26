@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UserInterface } from './user.interface';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, FindConditions } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -24,7 +24,9 @@ export class UserService {
       throw new InternalServerErrorException(error);
     }
   }
-  async store(body: UserInterface): Promise<UserEntity> {
+
+
+  async store(body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.create(body);
       user = await this.userRepository.save(user);
@@ -34,10 +36,13 @@ export class UserService {
     }
   }
 
-  async update(id: string, body: UserInterface): Promise<UserEntity> {
+  async update(
+    id: string,
+    body: Partial<UserInterface>,
+  ): Promise<UserEntity> {
     try {
       let user = await this.userRepository.findOneOrFail(id);
-      user = await this.userRepository.merge(user);
+      user = await this.userRepository.merge(user, body);
       user = await this.userRepository.save(user);
       return user;
     } catch (error) {

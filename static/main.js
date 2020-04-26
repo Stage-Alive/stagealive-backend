@@ -19,6 +19,7 @@ methods: {
     }
 },
 receivedMessage(message) {
+    console.log(message)
     this.messages.push(message)
 },
 validateInput() {

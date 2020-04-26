@@ -29,7 +29,7 @@ export class UserEntity {
       () => UserTypeEntity,
       userEntity => userEntity.users,
   )
-  @JoinColumn({name: 'user_type_id', referencedColumnName: 'name'})   
+  @JoinColumn({name: 'user_type_id', referencedColumnName: 'id'})   
   userType: UserTypeEntity
 
   @Column({name: 'user_type_id', type:'uuid'})

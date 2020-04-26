@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { RestoreUserDto } from './dto/restore-user.dto';
 import { StoreUserDto } from './dto/store-user.dto';
-import { IndexQueryDto } from './dto/index-query.dto';
+import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 
 @Controller('users')
 @ApiTags('users')

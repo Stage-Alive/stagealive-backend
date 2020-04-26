@@ -15,7 +15,7 @@ import { ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { StoreUserTypeDto } from './dto/store-user-type.dto';
 import { UpdateUserTypeDto } from './dto/update-user-type.dto';
 import { RestoreUserTypeDto } from './dto/restore-user-type.dto';
-import { IndexQueryDto } from './dto/index-query.dto';
+import { IndexQueryDto } from '../dtos-global/index-query.dto';
 
 @Controller('usertypes')
 @ApiTags('usertypes')

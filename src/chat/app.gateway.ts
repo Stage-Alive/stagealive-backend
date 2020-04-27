@@ -16,10 +16,23 @@ import {
   private logger: Logger = new Logger('AppGateway');
  
   @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, payload: string): void {
-   this.server.emit('msgToClient', payload);
+  handleMessage(client: Socket, payload: { name: string, text: string, room: string }): void {
+    console.log(payload)
+   this.server.to(payload.room).emit('msgToClient', payload);
   }
- 
+
+  @SubscribeMessage('join')
+  handleJoinRoom(client: Socket, room: string) {
+    client.join(room)
+    client.emit('joinedRoom', room)
+  }
+
+  @SubscribeMessage('leave')
+  handleLeaveRoom(client: Socket, room: string) {
+    client.leave(room)
+    client.emit('leavedRoom')
+  }
+
   afterInit(server: Server) {
    this.logger.log('Init');
   }

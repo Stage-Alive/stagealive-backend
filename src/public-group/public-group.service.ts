@@ -34,6 +34,11 @@ export class PublicGroupService {
 
   async show(id: string): Promise<PublicGroupEntity> {
     try {
+      // let result = await this.publicGroupRepository
+      //   .createQueryBuilder('public_groups')
+      //   .innerJoinAndSelect('public_groups.group', 'groups', 'groups.id')
+      //   .where('public_groups.id =: id', { id: id })
+      //   .getOne();
       let result = await this.publicGroupRepository.findOneOrFail(id);
       return result;
     } catch (error) {

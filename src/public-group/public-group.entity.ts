@@ -45,10 +45,10 @@ export class PublicGroupEntity {
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
 
-  @OneToOne(type => GroupEntity)
+  @OneToOne(type => GroupEntity, { eager: true })
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 
-  // @Column({name: 'group_id'})
-  // groupId: string
+  // @Column({ name: 'group_id' })
+  // groupId: string;
 }

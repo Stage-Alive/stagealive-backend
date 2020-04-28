@@ -9,7 +9,6 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { PublicGroupInterface } from './public-group.interface';
-import { RegionEntity } from 'src/region/region.entity';
 
 @Injectable()
 export class PublicGroupService {
@@ -35,6 +34,11 @@ export class PublicGroupService {
 
   async show(id: string): Promise<PublicGroupEntity> {
     try {
+      // let result = await this.publicGroupRepository
+      //   .createQueryBuilder('public_groups')
+      //   .innerJoinAndSelect('public_groups.group', 'groups', 'groups.id')
+      //   .where('public_groups.id =: id', { id: id })
+      //   .getOne();
       let result = await this.publicGroupRepository.findOneOrFail(id);
       return result;
     } catch (error) {
@@ -44,21 +48,26 @@ export class PublicGroupService {
 
   async destroy(id: string) {
     try {
+      const group = await (await this.publicGroupRepository.findOneOrFail(id))
+        .group;
+      const resultGroup = await this.groupService.destroy(group.id);
       const result = await this.publicGroupRepository.softDelete(id);
-      const resultGroup = await this.groupService.destroyByPublicGroupId(id);
       return result.raw.affectedRows > 0 && resultGroup;
     } catch (error) {
+      await this.restore(id);
+      await this.groupService.restore(id);
       throw new InternalServerErrorException(error);
     }
   }
 
   async store(body: Partial<PublicGroupInterface>): Promise<PublicGroupEntity> {
     try {
-      const name = body.name;
-      const groupEntity = await this.groupService.create(name);
+      const groupEntity = await this.groupService.create(body);
+      console.log('groupEntity ', groupEntity);
 
       const publicGroupEntity = await this.publicGroupRepository.create(body);
       publicGroupEntity.group = groupEntity;
+      console.log('aqui');
 
       return await this.publicGroupRepository.save(publicGroupEntity);
     } catch (error) {
@@ -66,26 +75,26 @@ export class PublicGroupService {
     }
   }
 
-  //   async update(
-  //     id: string,
-  //     body: Partial<RegionInterface>,
-  //   ): Promise<RegionEntity> {
-  //     try {
-  //       let result = await this.regionRepository.findOneOrFail(id);
-  //       return await this.regionRepository.save(
-  //         await this.regionRepository.merge(result, body),
-  //       );
-  //     } catch (error) {
-  //       throw new InternalServerErrorException(error);
-  //     }
-  //   }
+  async update(
+    id: string,
+    body: Partial<PublicGroupInterface>,
+  ): Promise<PublicGroupEntity> {
+    try {
+      let result = await this.publicGroupRepository.findOneOrFail(id);
+      return await this.publicGroupRepository.save(
+        await this.publicGroupRepository.merge(result, body),
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 
-  //     async delete(id: string): Promise<boolean> {
-  //       try {
-  //         const result = await this.regionRepository.softDelete(id);
-  //         return result.raw.affectedRows > 0;
-  //       } catch (error) {
-  //         throw new InternalServerErrorException(error);
-  //       }
-  //     }
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.publicGroupRepository.softDelete(id);
+      return result.raw.affectedRows > 0;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

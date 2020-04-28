@@ -19,6 +19,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'static'));
+  app.enableCors();
 
   await app.listen(process.env.HTTP_PORT);
 }

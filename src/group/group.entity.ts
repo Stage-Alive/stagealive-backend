@@ -5,8 +5,12 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   Column,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserEntity } from 'src/user/user.entity';
 
 @Entity('groups')
 export class GroupEntity {
@@ -28,4 +32,22 @@ export class GroupEntity {
 
   @Column({ length: 255 })
   name: string;
+
+  @ManyToMany(
+    type => UserEntity,
+    user => user.groups,
+    { nullable: true },
+  )
+  @JoinTable({
+    name: 'groups_users',
+    joinColumn: {
+      name: 'group_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
+  users: UserEntity[];
 }

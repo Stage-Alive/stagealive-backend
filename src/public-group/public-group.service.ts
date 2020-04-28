@@ -29,6 +29,9 @@ export class PublicGroupService {
 
   async restore(id: string): Promise<PublicGroupEntity> {
     await this.publicGroupRepository.restore(id);
+    const groupId = await (await this.publicGroupRepository.findOneOrFail(id))
+      .group.id;
+    await this.groupService.restore(groupId);
     return await this.show(id);
   }
 
@@ -54,8 +57,8 @@ export class PublicGroupService {
       const result = await this.publicGroupRepository.softDelete(id);
       return result.raw.affectedRows > 0 && resultGroup;
     } catch (error) {
-      await this.restore(id);
-      await this.groupService.restore(id);
+      // await this.restore(id);
+      // await this.groupService.restore(id);
       throw new InternalServerErrorException(error);
     }
   }
@@ -80,10 +83,10 @@ export class PublicGroupService {
     body: Partial<PublicGroupInterface>,
   ): Promise<PublicGroupEntity> {
     try {
-      let result = await this.publicGroupRepository.findOneOrFail(id);
-      return await this.publicGroupRepository.save(
-        await this.publicGroupRepository.merge(result, body),
-      );
+      let publicGroup = await this.publicGroupRepository.findOneOrFail(id);
+      publicGroup = await this.publicGroupRepository.merge(publicGroup, body);
+      await this.groupService.update(publicGroup.group, body);
+      return await this.publicGroupRepository.save(publicGroup);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

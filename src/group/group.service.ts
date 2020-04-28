@@ -30,7 +30,15 @@ export class GroupService {
   }
 
   async create(data: Partial<GroupEntity>): Promise<GroupEntity> {
-    let group = await this.groupRepository.create(data);
+    const group = await this.groupRepository.create(data);
+    return await this.groupRepository.save(group);
+  }
+
+  async update(
+    group: GroupEntity,
+    data: Partial<GroupEntity>,
+  ): Promise<GroupEntity> {
+    group = await this.groupRepository.merge(group, data);
     return await this.groupRepository.save(group);
   }
 }

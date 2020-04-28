@@ -28,6 +28,8 @@
     "@nestjs/swagger": "^4.5.3",
     "nestjs-typeorm-paginate": "^1.0.3",
     "@nestjs/typeorm": "^7.0.0",
+    "@nestjs/platform-socket.io": "^7.0.9",
+    "@nestjs/websockets": "^7.0.9",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "mysql": "^2.18.1",
@@ -37,7 +39,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "swagger-ui-express": "^4.1.4",
-    "typeorm": "^0.2.24"
+    "typeorm": "^0.2.24",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",

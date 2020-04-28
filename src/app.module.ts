@@ -8,6 +8,7 @@ import { UserTypeModule } from './usertype/usertype.module';
 import { RegionModule } from './region/region.module';
 import { PublicGroupModule } from './public-group/public-group.module';
 import { GroupModule } from './group/group.module';
+import { AppGateway } from './chat/app.gateway';
 
 @Module({
   imports: [
@@ -17,10 +18,9 @@ import { GroupModule } from './group/group.module';
     UserTypeModule,
     RegionModule,
     PublicGroupModule,
-    GroupModule
+    GroupModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}
-

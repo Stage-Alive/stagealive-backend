@@ -42,7 +42,7 @@ export class PublicGroupService {
       //   .innerJoinAndSelect('public_groups.group', 'groups', 'groups.id')
       //   .where('public_groups.id =: id', { id: id })
       //   .getOne();
-      let result = await this.publicGroupRepository.findOneOrFail(id);
+      const result = await this.publicGroupRepository.findOneOrFail(id);
       return result;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -83,10 +83,10 @@ export class PublicGroupService {
     body: Partial<PublicGroupInterface>,
   ): Promise<PublicGroupEntity> {
     try {
-      let publicGroup = await this.publicGroupRepository.findOneOrFail(id);
-      publicGroup = await this.publicGroupRepository.merge(publicGroup, body);
-      await this.groupService.update(publicGroup.group, body);
-      return await this.publicGroupRepository.save(publicGroup);
+      const result = await this.publicGroupRepository.findOneOrFail(id);
+      return await this.publicGroupRepository.save(
+        await this.publicGroupRepository.merge(result, body),
+      );
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

@@ -71,7 +71,7 @@ export class UserTypeService {
 
   async show(id: string): Promise<UserTypeEntity> {
     try {
-      let user = await this.userTypeRepository.findOneOrFail(id);
+      const user = await this.userTypeRepository.findOneOrFail(id);
       return user;
     } catch (error) {
       throw new InternalServerErrorException(error);

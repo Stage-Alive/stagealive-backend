@@ -1,4 +1,3 @@
-
-export interface UserTypeInterface{
-    type: string
+export interface UserTypeInterface {
+  type: string;
 }

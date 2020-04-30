@@ -1,0 +1,113 @@
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  Controller,
+} from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
+import { RestoreLiveDto } from './dtos/restore-live.dto';
+import { StoreLiveDto } from './dtos/store-live.dto';
+import { UpdateLiveDto } from './dtos/update-live.dto';
+import { LiveService } from './live.service';
+
+@Controller('lives')
+@ApiTags('lives')
+export class LiveController {
+  constructor(private readonly liveService: LiveService) {}
+
+  @Get()
+  async index(@Req() req, @Query() query?: IndexQueryDto) {
+    const result = await this.liveService.paginate(query);
+
+    return {
+      message: 'Show a list of lives',
+      object: 'lives',
+      url: req.url,
+      data: result,
+    };
+  }
+
+  @Get(':id')
+  @ApiResponse({ status: 201, description: 'Get a live' })
+  @ApiResponse({ status: 400, description: 'Invalid fields' })
+  async show(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
+    const result = await this.liveService.show(id);
+
+    return {
+      message: 'Get a live',
+      object: 'live',
+      url: req.url,
+      data: result,
+    };
+  }
+
+  @Post()
+  @ApiResponse({ status: 201, description: 'Store a live' })
+  @ApiResponse({ status: 400, description: 'Invalid fields' })
+  async store(@Body() body: StoreLiveDto, @Req() req) {
+    const result = await this.liveService.store(body);
+
+    return {
+      message: 'Store a live',
+      object: 'live',
+      url: req.url,
+      data: result,
+    };
+  }
+
+  @Put(':id')
+  @ApiResponse({ status: 201, description: 'Update a live' })
+  @ApiResponse({ status: 400, description: 'Invalid fields' })
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() body: UpdateLiveDto,
+    @Req() req,
+  ) {
+    const result = await this.liveService.update(id, body);
+
+    return {
+      message: 'Update a live',
+      object: 'live',
+      url: req.url,
+      data: result,
+    };
+  }
+
+  @Delete(':id')
+  @ApiResponse({
+    status: 204,
+    description: 'The public was successfully deleted',
+  })
+  @ApiResponse({ status: 404, description: 'Region not found' })
+  async destroy(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
+    const result = await this.liveService.destroy(id);
+
+    return {
+      message: 'Deleting a live',
+      object: 'live',
+      url: req.url,
+      data: result,
+    };
+  }
+
+  @Post('restore')
+  @ApiResponse({ status: 400, description: 'Invalid fields' })
+  @ApiResponse({ status: 404, description: 'Public not found' })
+  async restore(@Body() body: RestoreLiveDto, @Req() req) {
+    const result = await this.liveService.restore(body.id);
+
+    return {
+      message: 'Restore a removed live',
+      object: 'live',
+      url: req.url,
+      data: result,
+    };
+  }
+}

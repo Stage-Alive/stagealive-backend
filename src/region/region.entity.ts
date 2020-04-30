@@ -16,7 +16,7 @@ export class RegionEntity {
   @ApiProperty({ description: 'The id of region', nullable: false })
   id: string;
 
-  @Column({ name: 'region', length:2, type: "varchar" })
+  @Column({ name: 'region', length: 2, type: 'varchar' })
   @ApiProperty({ description: 'Region', nullable: false })
   region: string;
 
@@ -41,8 +41,8 @@ export class RegionEntity {
   deletedAt: string;
 
   @OneToMany(
-      () => PublicGroupEntity,
-      publicGroupEntity => publicGroupEntity.region
+    () => PublicGroupEntity,
+    publicGroupEntity => publicGroupEntity.region,
   )
   publicGroups: PublicGroupEntity[];
 }

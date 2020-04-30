@@ -4,6 +4,4 @@ export interface UserInterface {
   email: string;
 
   userTypeId: string;
-
-
 }

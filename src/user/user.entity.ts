@@ -23,11 +23,17 @@ export class UserEntity {
   @Column({ name: 'remember_token', nullable: true, default: null })
   rememberToken: string;
 
-  @Column({ name: 'name' , type: 'varchar', length: 255})
+  @Column({ name: 'name', type: 'varchar', length: 255 })
   @ApiProperty({ description: 'Name of user', nullable: false })
   name: string;
 
-  @Column({ name: 'email', nullable: false, unique: true , type: 'varchar', length: 255})
+  @Column({
+    name: 'email',
+    nullable: false,
+    unique: true,
+    type: 'varchar',
+    length: 255,
+  })
   @ApiProperty({ description: 'Email of user', nullable: false })
   email: string;
 

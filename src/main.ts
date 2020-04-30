@@ -7,7 +7,6 @@ import { ConfigConst } from './constant/config.const';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
   const options = new DocumentBuilder()
     .setTitle('Stage Alive Services')
     .setDescription('The Stage Alive Services API')
@@ -16,7 +15,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 
- 
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.HTTP_PORT);

@@ -10,6 +10,6 @@ import { GroupEntity } from 'src/group/group.entity';
   imports: [TypeOrmModule.forFeature([PublicGroupEntity, GroupEntity])],
   providers: [GroupService, PublicGroupService],
   controllers: [PublicGroupController],
-  exports: [PublicGroupService, GroupService]
+  exports: [PublicGroupService, GroupService],
 })
 export class PublicGroupModule {}

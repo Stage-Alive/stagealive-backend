@@ -6,9 +6,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ChatEntity } from 'src/chat/chat.entity';
+import { GroupEntity } from 'src/group/group.entity';
 
 @Entity('lives')
 export class LiveEntity {
@@ -32,6 +35,24 @@ export class LiveEntity {
     ChatEntity => ChatEntity.live,
   )
   chats: ChatEntity[];
+
+  @ManyToMany(
+    type => GroupEntity,
+    group => group.lives,
+    { nullable: true },
+  )
+  @JoinTable({
+    name: 'groups_lives',
+    joinColumn: {
+      name: 'live_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'group_id',
+      referencedColumnName: 'id',
+    },
+  })
+  groups: GroupEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

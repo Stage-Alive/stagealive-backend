@@ -3,11 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { GroupModule } from './group/group.module';
+import { PrivateGroupModule } from './private-group/private-group.module';
+import { PublicGroupModule } from './public-group/public-group.module';
+import { RegionModule } from './region/region.module';
 import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
-import { RegionModule } from './region/region.module';
-import { PublicGroupModule } from './public-group/public-group.module';
-import { GroupModule } from './group/group.module';
 import { AppGateway } from './websocket/app.gateway';
 import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
@@ -20,6 +21,7 @@ import { LiveModule } from './live/live.module';
     UserTypeModule,
     RegionModule,
     PublicGroupModule,
+    PrivateGroupModule,
     GroupModule,
     ChatModule,
     MessageModule,

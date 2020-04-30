@@ -33,4 +33,12 @@ export class GroupService {
     const group = await this.groupRepository.create(data);
     return await this.groupRepository.save(group);
   }
+
+  async update(
+    group: GroupEntity,
+    data: Partial<GroupEntity>,
+  ): Promise<GroupEntity> {
+    group = await this.groupRepository.merge(group, data);
+    return await this.groupRepository.save(group);
+  }
 }

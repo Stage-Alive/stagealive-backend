@@ -83,10 +83,10 @@ export class PublicGroupService {
     body: Partial<PublicGroupInterface>,
   ): Promise<PublicGroupEntity> {
     try {
-      let publicGroup = await this.publicGroupRepository.findOneOrFail(id);
-      publicGroup = await this.publicGroupRepository.merge(publicGroup, body);
-      await this.groupService.update(publicGroup.group, body);
-      return await this.publicGroupRepository.save(publicGroup);
+      const result = await this.publicGroupRepository.findOneOrFail(id);
+      return await this.publicGroupRepository.save(
+        await this.publicGroupRepository.merge(result, body),
+      );
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

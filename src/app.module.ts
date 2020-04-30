@@ -9,7 +9,10 @@ import { PublicGroupModule } from './public-group/public-group.module';
 import { RegionModule } from './region/region.module';
 import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
-
+import { AppGateway } from './websocket/app.gateway';
+import { ChatModule } from './chat/chat.module';
+import { MessageModule } from './message/message.module';
+import { LiveModule } from './live/live.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,8 +23,11 @@ import { UserTypeModule } from './usertype/usertype.module';
     PublicGroupModule,
     PrivateGroupModule,
     GroupModule,
+    ChatModule,
+    MessageModule,
+    LiveModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppGateway],
 })
 export class AppModule {}

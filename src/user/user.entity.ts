@@ -9,10 +9,12 @@ import {
   Column,
   BeforeInsert,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserTypeEntity } from 'src/usertype/usertype.entity';
 import { createHmac } from 'crypto';
+import { MessageEntity } from 'src/message/message.entity';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -47,6 +49,12 @@ export class UserEntity {
   @Column({ name: 'user_type_id', type: 'uuid' })
   @ApiProperty({ description: 'The id of the type', nullable: false })
   userTypeId: string;
+
+  @OneToMany(
+    () => MessageEntity,
+    messageEntity => messageEntity.user,
+  )
+  messages: MessageEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

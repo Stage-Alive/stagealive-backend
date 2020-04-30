@@ -8,10 +8,12 @@ import {
   ManyToOne,
   JoinColumn,
   Column,
+  ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { MessageEntity } from '../message/message.entity';
 import { LiveEntity } from '../live/live.entity';
+import { GroupEntity } from 'src/group/group.entity';
 
 @Entity('chats')
 export class ChatEntity {
@@ -35,6 +37,17 @@ export class ChatEntity {
   @Column({ name: 'live_id', type: 'uuid' })
   @ApiProperty({ description: 'The id of live', nullable: false })
   liveId: string;
+
+  @ManyToOne(
+    () => GroupEntity,
+    groupEntity => groupEntity.chats,
+  )
+  @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
+  group: GroupEntity;
+
+  @Column({ name: 'group_id', type: 'uuid' })
+  @ApiProperty({ description: 'The id of group', nullable: false })
+  groupId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

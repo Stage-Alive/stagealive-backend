@@ -22,7 +22,6 @@ import { IndexQueryDto } from '../dtos-global/index-query.dto';
 export class UserTypeController {
   constructor(private readonly userTypeService: UserTypeService) {}
 
-
   @Get()
   async index(@Req() req, @Query() query?: IndexQueryDto) {
     const result = await this.userTypeService.paginate(query);
@@ -34,7 +33,6 @@ export class UserTypeController {
       data: result,
     };
   }
-
 
   @Get(':id')
   @ApiResponse({ status: 201, description: 'Get an user type' })

@@ -1,30 +1,37 @@
 import {
   Entity,
-  Column,
-  OneToMany,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserEntity } from 'src/user/user.entity';
+import { ChatEntity } from 'src/chat/chat.entity';
 
-@Entity('user_types')
-export class UserTypeEntity {
+@Entity('lives')
+export class LiveEntity {
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty({ description: 'The id of the activity slide', nullable: false })
+  @ApiProperty({ description: 'The id of lives', nullable: false })
   id: string;
 
-  @Column()
-  @ApiProperty({ description: 'Type of users', nullable: false })
-  type: string;
+  @Column({ name: 'link' })
+  @ApiProperty({
+    description: 'The url from streaming service',
+    nullable: false,
+  })
+  link: string;
+
+  @Column({ name: 'name' })
+  @ApiProperty({ description: 'Name', nullable: false })
+  name: string;
 
   @OneToMany(
-    type => UserEntity,
-    userEntity => userEntity.userType,
+    () => ChatEntity,
+    ChatEntity => ChatEntity.live,
   )
-  users: UserEntity[];
+  chats: ChatEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

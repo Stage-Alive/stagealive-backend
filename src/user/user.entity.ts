@@ -71,7 +71,7 @@ export class UserEntity {
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
 
-  @Column({ select: false, type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   password: string;
 
   @ManyToMany(

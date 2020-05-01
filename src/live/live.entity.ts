@@ -1,37 +1,58 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  PrimaryGeneratedColumn,
   Column,
-  JoinTable,
   OneToMany,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserEntity } from 'src/user/user.entity';
 import { ChatEntity } from 'src/chat/chat.entity';
-import { LiveEntity } from 'src/live/live.entity';
+import { GroupEntity } from 'src/group/group.entity';
 
-@Entity('groups')
-export class GroupEntity {
+@Entity('lives')
+export class LiveEntity {
   @PrimaryGeneratedColumn('uuid')
-  @ApiProperty({ description: 'The id of group', nullable: false })
+  @ApiProperty({ description: 'The id of lives', nullable: false })
   id: string;
+
+  @Column({ name: 'link' })
+  @ApiProperty({
+    description: 'The url from streaming service',
+    nullable: false,
+  })
+  link: string;
+
+  @Column({ name: 'name' })
+  @ApiProperty({ description: 'Name', nullable: false })
+  name: string;
 
   @OneToMany(
     () => ChatEntity,
-    chatEntity => chatEntity.group,
+    ChatEntity => ChatEntity.live,
   )
   chats: ChatEntity[];
 
   @ManyToMany(
-    type => LiveEntity,
-    live => live.groups,
+    type => GroupEntity,
+    group => group.lives,
     { nullable: true },
   )
-  lives: LiveEntity[];
+  @JoinTable({
+    name: 'groups_lives',
+    joinColumn: {
+      name: 'live_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'group_id',
+      referencedColumnName: 'id',
+    },
+  })
+  groups: GroupEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })
@@ -44,25 +65,4 @@ export class GroupEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
-
-  @Column({ length: 255 })
-  name: string;
-
-  @ManyToMany(
-    type => UserEntity,
-    user => user.groups,
-    { nullable: true },
-  )
-  @JoinTable({
-    name: 'groups_users',
-    joinColumn: {
-      name: 'group_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-  })
-  users: UserEntity[];
 }

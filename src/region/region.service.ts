@@ -69,12 +69,12 @@ export class RegionService {
     }
   }
 
-    async delete(id: string): Promise<boolean> {
-      try {
-        const result = await this.regionRepository.softDelete(id);
-        return result.raw.affectedRows > 0;
-      } catch (error) {
-        throw new InternalServerErrorException(error);
-      }
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.regionRepository.softDelete(id);
+      return result.raw.affectedRows > 0;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
+  }
 }

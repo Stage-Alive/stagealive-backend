@@ -10,11 +10,13 @@ import {
   BeforeInsert,
   BeforeUpdate,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserTypeEntity } from 'src/usertype/usertype.entity';
 import { createHmac } from 'crypto';
 import { GroupEntity } from 'src/group/group.entity';
+import { MessageEntity } from 'src/message/message.entity';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -50,6 +52,12 @@ export class UserEntity {
   @ApiProperty({ description: 'The id of the type', nullable: false })
   userTypeId: string;
 
+  @OneToMany(
+    () => MessageEntity,
+    messageEntity => messageEntity.user,
+  )
+  messages: MessageEntity[];
+
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })
   createdAt: string;
@@ -65,6 +73,13 @@ export class UserEntity {
   @Column({ select: false, type: 'varchar', length: 255 })
   password: string;
 
+  @ManyToMany(
+    type => GroupEntity,
+    group => group.users,
+    { nullable: true },
+  )
+  groups: GroupEntity[];
+
   @BeforeInsert()
   @BeforeUpdate()
   hashPassword() {
@@ -72,11 +87,4 @@ export class UserEntity {
       this.password = createHmac('sha256', this.password).digest('hex');
     }
   }
-
-  @ManyToMany(
-    type => GroupEntity,
-    group => group.users,
-    { nullable: true },
-  )
-  groups: GroupEntity[];
 }

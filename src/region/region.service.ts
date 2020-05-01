@@ -29,7 +29,7 @@ export class RegionService {
 
   async show(id: string): Promise<RegionEntity> {
     try {
-      let result = await this.regionRepository.findOneOrFail(id);
+      const result = await this.regionRepository.findOneOrFail(id);
       return result;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -60,7 +60,7 @@ export class RegionService {
     body: Partial<RegionInterface>,
   ): Promise<RegionEntity> {
     try {
-      let result = await this.regionRepository.findOneOrFail(id);
+      const result = await this.regionRepository.findOneOrFail(id);
       return await this.regionRepository.save(
         await this.regionRepository.merge(result, body),
       );

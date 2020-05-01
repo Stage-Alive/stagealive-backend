@@ -17,6 +17,7 @@ import { UserTypeEntity } from 'src/usertype/usertype.entity';
 import { createHmac } from 'crypto';
 import { GroupEntity } from 'src/group/group.entity';
 import { MessageEntity } from 'src/message/message.entity';
+import { ConfigConst } from 'src/constant/config.const';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -84,7 +85,10 @@ export class UserEntity {
   @BeforeUpdate()
   hashPassword() {
     if (this.password) {
-      this.password = createHmac('sha256', this.password).digest('hex');
+      this.password = createHmac(
+        ConfigConst.CRIPTO_ALGORITHM,
+        this.password,
+      ).digest(ConfigConst.ENCODE_CRIPTO_ALGORITHM);
     }
   }
 }

@@ -13,6 +13,7 @@ import { AppGateway } from './websocket/app.gateway';
 import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
 import { LiveModule } from './live/live.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -26,6 +27,7 @@ import { LiveModule } from './live/live.module';
     ChatModule,
     MessageModule,
     LiveModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

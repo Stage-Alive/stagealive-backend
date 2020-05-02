@@ -97,4 +97,8 @@ export class UserService {
   async getUserByEmail(email: string): Promise<UserEntity> {
     return await this.userRepository.findOneOrFail({ email });
   }
+
+  async getUserByFacebookId(facebookId: string): Promise<UserEntity> {
+    return await this.userRepository.findOneOrFail({ facebookId });
+  }
 }

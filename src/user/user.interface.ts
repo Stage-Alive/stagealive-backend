@@ -6,4 +6,6 @@ export interface UserInterface {
   userTypeId: string;
 
   password: string;
+
+  facebookId?: string;
 }

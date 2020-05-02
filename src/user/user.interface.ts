@@ -4,4 +4,6 @@ export interface UserInterface {
   email: string;
 
   userTypeId: string;
+
+  password: string;
 }

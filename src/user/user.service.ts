@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserInterface } from './user.interface';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +12,8 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { createHmac } from 'crypto';
+import { ConfigConst } from 'src/constant/config.const';
 
 @Injectable()
 export class UserService {
@@ -86,5 +92,9 @@ export class UserService {
     options: IPaginationOptions = { page: 1, limit: 10 },
   ): Promise<Pagination<UserEntity>> {
     return await paginate<UserEntity>(this.userRepository, options);
+  }
+
+  async getUserByEmail(email: string): Promise<UserEntity> {
+    return await this.userRepository.findOneOrFail({ email });
   }
 }

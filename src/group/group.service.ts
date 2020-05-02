@@ -1,13 +1,19 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class GroupService {
   constructor(
     @InjectRepository(GroupEntity)
     private readonly groupRepository: Repository<GroupEntity>,
+    private readonly userService: UserService,
   ) {}
 
   async show(id: string): Promise<GroupEntity> {
@@ -41,4 +47,42 @@ export class GroupService {
     group = await this.groupRepository.merge(group, data);
     return await this.groupRepository.save(group);
   }
+
+  async subscribe(request: any, id: string): Promise<Boolean> {
+    const userId = request.user.id;
+    try {
+      await this.groupRepository
+        .createQueryBuilder()
+        .relation(GroupEntity, 'users')
+        .of(id)
+        .add(userId);
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
+
+  async unsubscribe(request: any, id: string): Promise<Boolean> {
+    const userId = request.user.id;
+    try {
+      await this.groupRepository
+        .createQueryBuilder()
+        .relation(GroupEntity, 'users')
+        .of(id)
+        .remove(userId);
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
+  // async invite(request: any, id: string): Promise<GroupEntity> {
+  //   const userId = request.user.id;
+
+  //   const user = await this.userService.show(userId);
+  //   const group = await this.show(id);
+  //   const userOnGroup = group.users;
+  //   userOnGroup.push(user);
+  //   group.users = userOnGroup;
+  //   return await this.groupRepository.save(group);
+  // }
 }

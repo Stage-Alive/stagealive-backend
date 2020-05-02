@@ -17,6 +17,7 @@ import { UserTypeEntity } from 'src/usertype/usertype.entity';
 import { createHmac } from 'crypto';
 import { GroupEntity } from 'src/group/group.entity';
 import { MessageEntity } from 'src/message/message.entity';
+import { ConfigConst } from 'src/constant/config.const';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -70,7 +71,7 @@ export class UserEntity {
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
 
-  @Column({ select: false, type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255 })
   password: string;
 
   @ManyToMany(
@@ -84,7 +85,10 @@ export class UserEntity {
   @BeforeUpdate()
   hashPassword() {
     if (this.password) {
-      this.password = createHmac('sha256', this.password).digest('hex');
+      this.password = createHmac(
+        ConfigConst.CRIPTO_ALGORITHM,
+        this.password,
+      ).digest(ConfigConst.ENCODE_CRIPTO_ALGORITHM);
     }
   }
 }

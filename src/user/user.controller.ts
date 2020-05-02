@@ -10,6 +10,7 @@ import {
   Req,
   Query,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,6 +18,7 @@ import { UserService } from './user.service';
 import { RestoreUserDto } from './dto/restore-user.dto';
 import { StoreUserDto } from './dto/store-user.dto';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 @ApiTags('users')
@@ -24,6 +26,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   async index(@Req() req, @Query() query?: IndexQueryDto) {
     const result = await this.userService.paginate(query);
 

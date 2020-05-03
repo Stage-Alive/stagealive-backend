@@ -6,7 +6,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
   Req,
   Query,
   Patch,
@@ -19,11 +18,15 @@ import { RestoreUserDto } from './dto/restore-user.dto';
 import { StoreUserDto } from './dto/store-user.dto';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('users')
 @ApiTags('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
@@ -62,7 +65,10 @@ export class UserController {
       message: 'Store a new user',
       object: 'user',
       url: req.url,
-      data: result,
+      data: {
+        ...result,
+        access_token: this.jwtService.sign(body),
+      },
     };
   }
 

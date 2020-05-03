@@ -12,6 +12,8 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { ChatEntity } from 'src/chat/chat.entity';
 import { GroupEntity } from 'src/group/group.entity';
+import { UserEntity } from 'src/user/user.entity';
+import { ArtistEntity } from 'src/artist/artist.entity';
 
 @Entity('lives')
 export class LiveEntity {
@@ -54,6 +56,42 @@ export class LiveEntity {
   })
   groups: GroupEntity[];
 
+  @ManyToMany(
+    type => UserEntity,
+    user => user.lives,
+    { nullable: true },
+  )
+  @JoinTable({
+    name: 'lives_users',
+    joinColumn: {
+      name: 'live_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
+  users: UserEntity[];
+
+  @ManyToMany(
+    type => ArtistEntity,
+    artist => artist.lives,
+    { nullable: true },
+  )
+  @JoinTable({
+    name: 'lives_artists',
+    joinColumn: {
+      name: 'live_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'artist_id',
+      referencedColumnName: 'id',
+    },
+  })
+  artists: ArtistEntity[];
+
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })
   createdAt: string;
@@ -65,4 +103,10 @@ export class LiveEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
+
+  @Column({ name: 'start_at' })
+  startAt: Date;
+
+  @Column({ name: 'banner' })
+  banner: string;
 }

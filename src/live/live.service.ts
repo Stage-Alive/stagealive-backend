@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
@@ -8,6 +12,7 @@ import {
   Pagination,
   IPaginationOptions,
 } from 'nestjs-typeorm-paginate';
+import { GroupEntity } from 'src/group/group.entity';
 
 @Injectable()
 export class LiveService {
@@ -55,5 +60,19 @@ export class LiveService {
     options: IPaginationOptions = { page: 1, limit: 10 },
   ): Promise<Pagination<LiveEntity>> {
     return paginate<LiveEntity>(this.liveRepository, options);
+  }
+
+  async watch(id: string, request: any): Promise<Boolean> {
+    const userId = request.user.id;
+    try {
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'users')
+        .of(id)
+        .add(userId);
+      return true;
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
   }
 }

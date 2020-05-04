@@ -6,7 +6,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
   Req,
   Query,
   Patch,
@@ -19,6 +18,7 @@ import { RestoreUserDto } from './dto/restore-user.dto';
 import { StoreUserDto } from './dto/store-user.dto';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('users')
 @ApiTags('users')

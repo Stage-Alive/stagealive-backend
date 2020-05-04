@@ -23,10 +23,7 @@ import { JwtService } from '@nestjs/jwt';
 @Controller('users')
 @ApiTags('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
@@ -65,10 +62,7 @@ export class UserController {
       message: 'Store a new user',
       object: 'user',
       url: req.url,
-      data: {
-        ...result,
-        access_token: this.jwtService.sign(body),
-      },
+      data: result,
     };
   }
 

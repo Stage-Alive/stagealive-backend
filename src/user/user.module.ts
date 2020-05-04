@@ -11,7 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
     PassportModule,
     JwtModule.register({
       signOptions: {},
-      secret: 'secret_key',
+      secret: 'f3WPrZ3W+O8X58DnMvKaXUIlVJT6HAXC5xNgtsPApbI=',
     }),
     TypeOrmModule.forFeature([UserEntity]),
   ],

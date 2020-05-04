@@ -21,6 +21,12 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+  @UseGuards(AuthGuard('facebook'))
+  @Post('/login/facebook')
+  async loginFacebook(@Body() body: AuthDto) {
+    return this.authService.loginFacebook(body);
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
   async me(@Request() request) {

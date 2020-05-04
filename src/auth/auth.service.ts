@@ -13,10 +13,14 @@ export class AuthService {
   ) {}
 
   async valideUser(data: Partial<AuthInterface>): Promise<UserEntity> {
-    const facebookId = data.profile.id;
+    const facebookProfile = data.profile;
 
-    if (facebookId) {
+    if (facebookProfile && facebookProfile.id) {
+      const facebookId = data.profile.id;
+      //
+      // if (facebookId) {
       return this.userService.getUserByFacebookId(facebookId);
+      // }
     }
 
     const email = data.email;

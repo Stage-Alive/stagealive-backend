@@ -51,7 +51,7 @@ export class GroupEntity {
   @ManyToMany(
     type => UserEntity,
     user => user.groups,
-    { nullable: true, eager: true },
+    { nullable: true, lazy: true },
   )
   @JoinTable({
     name: 'groups_users',

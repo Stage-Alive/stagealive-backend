@@ -23,8 +23,8 @@ export class LiveService {
 
   async show(id: string): Promise<LiveEntity> {
     try {
-      const group = await this.liveRepository.findOneOrFail(id);
-      return group;
+      return await this.liveRepository.findOneOrFail(id);
+      // return group;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -36,21 +36,47 @@ export class LiveService {
   }
 
   async destroy(id: string): Promise<boolean> {
+    await this.liveRepository
+      .createQueryBuilder()
+      .relation(LiveEntity, 'artists')
+      .of(id)
+      .set(null);
     const result = await this.liveRepository.softDelete(id);
     return result.raw.affectedRows > 0;
   }
 
-  async store(data: Partial<LiveEntity>): Promise<LiveEntity> {
-    const group = await this.liveRepository.create(data);
-    return this.liveRepository.save(group);
+  async store(data: Partial<LiveInterface>): Promise<LiveEntity> {
+    const live = await this.liveRepository.create(data);
+    await this.liveRepository.save(live);
+
+    if (data.artistsIds) {
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'artists')
+        .of(live.id)
+        .set(data.artistsIds);
+    }
+    return live;
   }
 
   async update(id: string, body: Partial<LiveInterface>): Promise<LiveEntity> {
     try {
       let live = await this.liveRepository.findOneOrFail(id);
       live = await this.liveRepository.merge(live, body);
-      live = await this.liveRepository.save(live);
-      return live;
+
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'artists')
+        .of(id)
+        .set(null);
+
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'artists')
+        .of(id)
+        .set(body.artistsIds);
+
+      return await this.liveRepository.save(live);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -67,12 +93,14 @@ export class LiveService {
     try {
       await this.liveRepository
         .createQueryBuilder()
-        .relation(LiveEntity, 'users')
+        .relation(GroupEntity, 'users')
         .of(id)
         .add(userId);
-      return true;
     } catch (error) {
-      throw new UnauthorizedException(error);
+      if (error.code != 'ER_DUP_ENTRY') {
+        throw new UnauthorizedException(error);
+      }
     }
+    return true;
   }
 }

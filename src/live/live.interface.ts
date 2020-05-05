@@ -3,7 +3,7 @@ export interface LiveInterface {
 
   link: string;
 
-  artist_id: string;
+  startAt: string;
 
-  start_at: string;
+  artistsIds?: string[];
 }

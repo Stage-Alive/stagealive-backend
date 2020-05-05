@@ -5,6 +5,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToMany,
+  Column,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { LiveEntity } from 'src/live/live.entity';
@@ -14,6 +15,9 @@ export class ArtistEntity {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({ description: 'The id of artists', nullable: false })
   id: string;
+
+  @Column({ name: 'name' })
+  name: string;
 
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })

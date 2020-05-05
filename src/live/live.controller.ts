@@ -1,5 +1,6 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   Param,
@@ -8,17 +9,15 @@ import {
   Put,
   Query,
   Req,
-  Controller,
   UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { RestoreLiveDto } from './dtos/restore-live.dto';
 import { StoreLiveDto } from './dtos/store-live.dto';
 import { UpdateLiveDto } from './dtos/update-live.dto';
 import { LiveService } from './live.service';
-import { request } from 'express';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('lives')
 @ApiTags('lives')
@@ -119,7 +118,7 @@ export class LiveController {
   async watch(@Param('id', new ParseUUIDPipe()) id: string, @Req() request) {
     const result = await this.liveService.watch(id, request);
     return {
-      message: 'Restore a removed live',
+      message: 'Watching live',
       object: 'live',
       url: request,
       data: result,

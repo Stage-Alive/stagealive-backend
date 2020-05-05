@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StoreLiveDto {
@@ -10,11 +10,11 @@ export class StoreLiveDto {
   @ApiProperty({ nullable: false })
   name: string;
 
-  // @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ nullable: false })
-  artist_id: string;
+  artistsIds: string[];
 
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
-  start_at: string;
+  startAt: string;
 }

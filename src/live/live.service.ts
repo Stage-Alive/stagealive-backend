@@ -93,7 +93,7 @@ export class LiveService {
     try {
       await this.liveRepository
         .createQueryBuilder()
-        .relation(GroupEntity, 'users')
+        .relation(LiveEntity, 'users')
         .of(id)
         .add(userId);
     } catch (error) {

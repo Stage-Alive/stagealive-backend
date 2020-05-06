@@ -120,7 +120,7 @@ export class LiveController {
     return {
       message: 'Watching live',
       object: 'live',
-      url: request,
+      url: request.url,
       data: result,
     };
   }

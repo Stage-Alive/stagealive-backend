@@ -3,16 +3,15 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
-import { GroupEntity } from 'src/group/group.entity';
 
 @Injectable()
 export class LiveService {

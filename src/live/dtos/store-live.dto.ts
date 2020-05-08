@@ -11,6 +11,10 @@ export class StoreLiveDto {
   name: string;
 
   @IsOptional()
+  @ApiProperty({ nullable: true })
+  banner: string;
+
+  @IsOptional()
   @ApiProperty({ nullable: false })
   artistsIds: string[];
 

@@ -21,7 +21,6 @@ import { ConfigConst } from './constant/config.const';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(),
-
     UserModule,
     UserTypeModule,
     RegionModule,

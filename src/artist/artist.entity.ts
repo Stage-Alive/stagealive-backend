@@ -16,9 +16,6 @@ export class ArtistEntity {
   @ApiProperty({ description: 'The id of artists', nullable: false })
   id: string;
 
-  @Column({ name: 'name' })
-  name: string;
-
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })
   createdAt: string;
@@ -37,4 +34,13 @@ export class ArtistEntity {
     { nullable: true },
   )
   lives: LiveEntity[];
+
+  @Column({ name: 'contact_phone' })
+  contactPhone: string;
+
+  @Column({ name: 'contact_email' })
+  contactEmail: string;
+
+  @Column({ name: 'name' })
+  name: string;
 }

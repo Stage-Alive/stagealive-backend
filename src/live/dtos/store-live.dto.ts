@@ -21,4 +21,12 @@ export class StoreLiveDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
   startAt: string;
+
+  @IsOptional()
+  @ApiProperty({ nullable: true })
+  mainBanner: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ nullable: false })
+  secondaryBanner: string;
 }

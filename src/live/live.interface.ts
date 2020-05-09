@@ -6,4 +6,8 @@ export interface LiveInterface {
   startAt: string;
 
   artistsIds?: string[];
+
+  mainBanner: string;
+
+  secondaryBanner: string;
 }

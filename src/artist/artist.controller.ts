@@ -10,7 +10,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ArtistService } from './artist.service';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { StoreArtistDto } from './dtos/store-artist.dto';
@@ -18,6 +18,7 @@ import { UpdateArtistDto } from './dtos/update-artist.dto';
 import { RestoreArtistDto } from './dtos/restore-artist.dto';
 
 @Controller('artists')
+@ApiTags('artists')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
@@ -62,7 +63,7 @@ export class ArtistController {
   }
 
   @Put(':id')
-  @ApiResponse({ status: 201, description: 'Update a live' })
+  @ApiResponse({ status: 201, description: 'Update an artist' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -98,12 +99,12 @@ export class ArtistController {
 
   @Post('restore')
   @ApiResponse({ status: 400, description: 'Invalid fields' })
-  @ApiResponse({ status: 404, description: 'Live not found' })
+  @ApiResponse({ status: 404, description: 'Artist not found' })
   async restore(@Body() body: RestoreArtistDto, @Req() req) {
     const result = await this.artistService.restore(body.id);
 
     return {
-      message: 'Restore a removed live',
+      message: 'Restore a removed artist',
       object: 'live',
       url: req.url,
       data: result,

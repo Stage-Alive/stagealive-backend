@@ -22,7 +22,9 @@ export class LiveService {
 
   async show(id: string): Promise<LiveEntity> {
     try {
-      return await this.liveRepository.findOneOrFail(id);
+      return await this.liveRepository.findOneOrFail(id, {
+        relations: ['artists'],
+      });
       // return group;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -35,11 +37,7 @@ export class LiveService {
   }
 
   async destroy(id: string): Promise<boolean> {
-    await this.liveRepository
-      .createQueryBuilder()
-      .relation(LiveEntity, 'artists')
-      .of(id)
-      .set(null);
+    await this.removeArtists(id);
     const result = await this.liveRepository.softDelete(id);
     return result.raw.affectedRows > 0;
   }
@@ -53,27 +51,36 @@ export class LiveService {
         .createQueryBuilder()
         .relation(LiveEntity, 'artists')
         .of(live.id)
-        .set(data.artistsIds);
+        .add(data.artistsIds);
     }
-    return live;
+    return await this.show(live.id);
   }
 
+  private async removeArtists(id: string) {
+    const allArtists = await this.liveRepository
+      .createQueryBuilder()
+      .relation(LiveEntity, 'artists')
+      .of(id)
+      .loadMany();
+
+    await this.liveRepository
+      .createQueryBuilder()
+      .relation(LiveEntity, 'artists')
+      .of(id)
+      .remove(allArtists);
+  }
   async update(id: string, body: Partial<LiveInterface>): Promise<LiveEntity> {
     try {
       let live = await this.liveRepository.findOneOrFail(id);
+
+      await this.removeArtists(id);
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'artists')
+        .of(id)
+        .add(body.artistsIds);
+
       live = await this.liveRepository.merge(live, body);
-
-      await this.liveRepository
-        .createQueryBuilder()
-        .relation(LiveEntity, 'artists')
-        .of(id)
-        .set(null);
-
-      await this.liveRepository
-        .createQueryBuilder()
-        .relation(LiveEntity, 'artists')
-        .of(id)
-        .set(body.artistsIds);
 
       return await this.liveRepository.save(live);
     } catch (error) {
@@ -84,7 +91,9 @@ export class LiveService {
   async paginate(
     options: IPaginationOptions = { page: 1, limit: 10 },
   ): Promise<Pagination<LiveEntity>> {
-    return paginate<LiveEntity>(this.liveRepository, options);
+    return paginate<LiveEntity>(this.liveRepository, options, {
+      relations: ['artists'],
+    });
   }
 
   async watch(id: string, request: any): Promise<Boolean> {

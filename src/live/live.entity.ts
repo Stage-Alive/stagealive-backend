@@ -105,8 +105,11 @@ export class LiveEntity {
   deletedAt: string;
 
   @Column({ name: 'start_at' })
-  startAt: Date;
+  startAt: string;
 
-  @Column({ name: 'banner' })
-  banner: string;
+  @Column({ name: 'main_banner' })
+  mainBanner: string;
+
+  @Column({ name: 'secondary_banner' })
+  secondaryBanner: string;
 }

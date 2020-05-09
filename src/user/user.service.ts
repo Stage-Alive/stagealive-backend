@@ -14,12 +14,14 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { createHmac } from 'crypto';
 import { ConfigConst } from 'src/constant/config.const';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private jwtService: JwtService,
   ) {}
 
   async restore(id: string): Promise<UserEntity> {
@@ -36,11 +38,16 @@ export class UserService {
     }
   }
 
-  async store(body: Partial<UserInterface>): Promise<UserEntity> {
+  async store(body: Partial<UserInterface>): Promise<any> {
     try {
       let user = await this.userRepository.create(body);
       user = await this.userRepository.save(user);
-      return user;
+      const userStr = JSON.stringify(user);
+      const data = {
+        ...user,
+        access_token: this.jwtService.sign(userStr),
+      };
+      return data;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -96,5 +103,9 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<UserEntity> {
     return await this.userRepository.findOneOrFail({ email });
+  }
+
+  async getUserByFacebookId(facebookId: string): Promise<UserEntity> {
+    return await this.userRepository.findOneOrFail({ facebookId });
   }
 }

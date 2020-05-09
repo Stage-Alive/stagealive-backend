@@ -72,7 +72,7 @@ export class UserEntity {
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password: string;
 
   @ManyToMany(
@@ -99,4 +99,7 @@ export class UserEntity {
       ).digest(ConfigConst.ENCODE_CRIPTO_ALGORITHM);
     }
   }
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  facebookId: string;
 }

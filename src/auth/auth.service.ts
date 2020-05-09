@@ -12,7 +12,17 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async valideUser(data: AuthInterface): Promise<UserEntity> {
+  async valideUser(data: Partial<AuthInterface>): Promise<UserEntity> {
+    const facebookProfile = data.profile;
+
+    if (facebookProfile && facebookProfile.id) {
+      const facebookId = data.profile.id;
+      //
+      // if (facebookId) {
+      return this.userService.getUserByFacebookId(facebookId);
+      // }
+    }
+
     const email = data.email;
     const password = await createHmac(
       ConfigConst.CRIPTO_ALGORITHM,
@@ -27,7 +37,31 @@ export class AuthService {
     return null;
   }
 
+  async createUserBasedOnFacebook(
+    data: Partial<AuthInterface>,
+  ): Promise<UserEntity> {
+    const facebookId = data.profile.id;
+    const name = data.profile.displayName;
+    const email = data.profile.email;
+
+    const user = await this.userService.store({
+      name: name,
+      facebookId: facebookId,
+      email: email,
+    });
+
+    return user;
+  }
+
   async login(data: AuthInterface) {
+    const user = await this.valideUser(data);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+    return { access_token: this.jwtService.sign(data) };
+  }
+
+  async loginFacebook(data: AuthInterface) {
     const user = await this.valideUser(data);
     if (!user) {
       throw new UnauthorizedException();

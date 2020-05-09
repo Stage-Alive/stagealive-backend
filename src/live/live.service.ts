@@ -46,7 +46,7 @@ export class LiveService {
     const live = await this.liveRepository.create(data);
     await this.liveRepository.save(live);
 
-    if (data.artistsIds) {
+    if (data.artistsIds) {  
       await this.liveRepository
         .createQueryBuilder()
         .relation(LiveEntity, 'artists')

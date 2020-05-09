@@ -56,10 +56,12 @@ export class GroupService {
         .relation(GroupEntity, 'users')
         .of(id)
         .add(userId);
-      return true;
     } catch (error) {
-      throw new UnauthorizedException(error);
+      if (error.code != 'ER_DUP_ENTRY') {
+        throw new UnauthorizedException(error);
+      }
     }
+    return true;
   }
 
   async unsubscribe(request: any, id: string): Promise<Boolean> {
@@ -80,7 +82,7 @@ export class GroupService {
 
   //   const user = await this.userService.show(userId);
   //   const group = await this.show(id);
-  //   const userOnGroup = group.users;
+  //   const userOnGroup = await group.users;
   //   userOnGroup.push(user);
   //   group.users = userOnGroup;
   //   return await this.groupRepository.save(group);

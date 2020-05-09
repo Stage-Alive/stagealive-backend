@@ -14,6 +14,9 @@ import { ChatModule } from './chat/chat.module';
 import { MessageModule } from './message/message.module';
 import { LiveModule } from './live/live.module';
 import { AuthModule } from './auth/auth.module';
+import { ArtistModule } from './artist/artist.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigConst } from './constant/config.const';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -28,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     MessageModule,
     LiveModule,
     AuthModule,
+    ArtistModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

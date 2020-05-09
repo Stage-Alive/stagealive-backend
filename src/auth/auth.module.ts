@@ -6,15 +6,17 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { ConfigConst } from 'src/constant/config.const';
 
 @Module({
   imports: [
     PassportModule,
+    UserModule,
     JwtModule.register({
       signOptions: {},
-      secret: 'f3WPrZ3W+O8X58DnMvKaXUIlVJT6HAXC5xNgtsPApbI=',
+      secret: ConfigConst.JWT_SECRET,
+      verifyOptions: { ignoreExpiration: true },
     }),
-    UserModule,
   ],
   providers: [AuthService, JwtStrategy, FacebookStrategy],
   exports: [AuthService],

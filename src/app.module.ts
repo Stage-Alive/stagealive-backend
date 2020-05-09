@@ -3,20 +3,19 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ArtistModule } from './artist/artist.module';
+import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
+import { ContactFormModule } from './contactform/contactform.module';
 import { GroupModule } from './group/group.module';
+import { LiveModule } from './live/live.module';
+import { MessageModule } from './message/message.module';
 import { PrivateGroupModule } from './private-group/private-group.module';
 import { PublicGroupModule } from './public-group/public-group.module';
 import { RegionModule } from './region/region.module';
 import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
 import { AppGateway } from './websocket/app.gateway';
-import { ChatModule } from './chat/chat.module';
-import { MessageModule } from './message/message.module';
-import { LiveModule } from './live/live.module';
-import { AuthModule } from './auth/auth.module';
-import { ArtistModule } from './artist/artist.module';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigConst } from './constant/config.const';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -32,6 +31,7 @@ import { ConfigConst } from './constant/config.const';
     LiveModule,
     AuthModule,
     ArtistModule,
+    ContactFormModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

@@ -10,7 +10,7 @@ export class StorageController {
 
   @Post()
   async getSignURL(@Body() data: SignUrlDto, @Req() req) {
-    const result = this.storageService.getSignURL(data);
+    const result = await this.storageService.getSignURL(data);
     return {
       message: 'Get a sign url for put S3 -- expires 1 hour',
       object: 'string',

@@ -102,6 +102,6 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   facebookId: string;
 
-  @Column({ name: 'profile_photo' })
+  @Column({ name: 'profile_photo', nullable: true })
   profilePhoto: string;
 }

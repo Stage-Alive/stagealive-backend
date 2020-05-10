@@ -5,4 +5,8 @@ export class SignUrlDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false, description: 's3 path' })
   path: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ nullable: false, description: 's3 path' })
+  type: string;
 }

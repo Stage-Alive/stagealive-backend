@@ -8,4 +8,6 @@ export interface UserInterface {
   password: string;
 
   facebookId?: string;
+
+  profilePhoto?: string;
 }

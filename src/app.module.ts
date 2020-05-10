@@ -16,6 +16,7 @@ import { RegionModule } from './region/region.module';
 import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
 import { AppGateway } from './websocket/app.gateway';
+import { StorageModule } from './storage/storage.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -32,6 +33,7 @@ import { AppGateway } from './websocket/app.gateway';
     AuthModule,
     ArtistModule,
     ContactFormModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

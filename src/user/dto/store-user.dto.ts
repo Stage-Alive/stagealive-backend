@@ -18,4 +18,8 @@ export class StoreUserDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'The password of user', nullable: false })
   password: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ description: 'The password of user', nullable: false })
+  profilePhoto?: string;
 }

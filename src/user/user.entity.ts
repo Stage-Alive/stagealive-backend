@@ -93,13 +93,15 @@ export class UserEntity {
   @BeforeUpdate()
   hashPassword() {
     if (this.password) {
-      this.password = createHmac(
-        ConfigConst.CRIPTO_ALGORITHM,
-        this.password,
-      ).digest(ConfigConst.ENCODE_CRIPTO_ALGORITHM);
+      this.password = createHmac(ConfigConst.CRIPTO_ALGORITHM, this.password).digest(
+        ConfigConst.ENCODE_CRIPTO_ALGORITHM,
+      );
     }
   }
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   facebookId: string;
+
+  @Column({ name: 'profile_photo' })
+  profilePhoto: string;
 }

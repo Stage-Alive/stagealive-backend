@@ -15,7 +15,7 @@ export class StorageService {
 
     const paramsUploadS3 = {
       Bucket: process.env.S3_BUCKET,
-      Key: data.path + key + '.png',
+      Key: data.path + key + data.type,
       Expires: 3600,
     };
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsOptional } from 'class-validator';
 
 export class StoreUserDto {
   @IsNotEmpty()
@@ -19,7 +19,7 @@ export class StoreUserDto {
   @ApiProperty({ description: 'The password of user', nullable: false })
   password: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ description: 'The password of user', nullable: false })
   profilePhoto?: string;
 }

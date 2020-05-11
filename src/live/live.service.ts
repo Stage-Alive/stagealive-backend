@@ -108,7 +108,9 @@ export class LiveService {
 
       live = await this.liveRepository.merge(live, body);
 
-      return await this.liveRepository.save(live);
+      await this.liveRepository.save(live);
+
+      return await this.show(id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

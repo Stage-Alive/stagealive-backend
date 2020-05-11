@@ -35,24 +35,27 @@ export class GroupService {
     return result.raw.affectedRows > 0;
   }
 
-  async create(data: Partial<GroupInterface>): Promise<GroupEntity> {
-    let group = this.groupRepository.create(data);
-    group = await this.groupRepository.save(group);
-
-    if (data.liveId) {
+  private async updateGroupsLives(groupId: string, liveId: string) {
+    if (liveId) {
       await this.groupRepository
         .createQueryBuilder()
         .relation(GroupEntity, 'lives')
-        .of(group)
-        .add(data.liveId);
+        .of(groupId)
+        .add(liveId);
     }
-
+  }
+  async create(data: Partial<GroupInterface>): Promise<GroupEntity> {
+    let group = this.groupRepository.create(data);
+    group = await this.groupRepository.save(group);
+    await this.updateGroupsLives(group.id, data.liveId);
     return group;
   }
 
-  async update(group: GroupEntity, data: Partial<GroupEntity>): Promise<GroupEntity> {
+  async update(group: GroupEntity, data: Partial<GroupInterface>): Promise<GroupEntity> {
     group = await this.groupRepository.merge(group, data);
-    return await this.groupRepository.save(group);
+    await this.groupRepository.save(group);
+    await this.updateGroupsLives(group.id, data.liveId);
+    return group;
   }
 
   async subscribe(request: any, id: string): Promise<Boolean> {

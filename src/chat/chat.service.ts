@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { ChatEntity } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { ChatInterface } from './chat.interface';
 
 @Injectable()
 export class ChatService {
@@ -15,7 +16,7 @@ export class ChatService {
     return await paginate<ChatEntity>(this.chatRepository, options);
   }
 
-  async store(data: Partial<ChatEntity>): Promise<ChatEntity> {
+  async store(data: ChatInterface): Promise<ChatEntity> {
     const chat = await this.chatRepository.create(data);
     return this.chatRepository.save(chat);
   }
@@ -45,8 +46,8 @@ export class ChatService {
     return result.raw.affectedRows > 0;
   }
 
-  async create(data: Partial<ChatEntity>): Promise<ChatEntity> {
-    const chat = await this.chatRepository.create(data);
-    return await this.chatRepository.save(chat);
-  }
+  // async create(data: Partial<ChatEntity>): Promise<ChatEntity> {
+  //   const chat = await this.chatRepository.create(data);
+  //   return await this.chatRepository.save(chat);
+  // }
 }

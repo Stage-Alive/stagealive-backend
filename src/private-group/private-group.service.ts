@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { PrivateGroupEntity } from './private-group.entity';
 import { GroupService } from 'src/group/group.service';
 import { PrivateGroupInterface } from './private-group.interface';
+import { ChatService } from 'src/chat/chat.service';
 
 @Injectable()
 export class PrivateGroupService {
@@ -12,6 +13,7 @@ export class PrivateGroupService {
     @InjectRepository(PrivateGroupEntity)
     private readonly privateGroupRepository: Repository<PrivateGroupEntity>,
     private readonly groupService: GroupService,
+    private readonly chatService: ChatService,
   ) {}
 
   async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<PrivateGroupEntity>> {
@@ -65,6 +67,8 @@ export class PrivateGroupService {
         .relation(PrivateGroupEntity, 'createdBy')
         .of(privateGroupEntity)
         .set(userId);
+
+      await this.chatService.store({ liveId: body.liveId, groupId: groupEntity.id });
 
       return await this.show(privateGroupEntity.id);
     } catch (error) {

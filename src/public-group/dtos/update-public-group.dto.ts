@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePublicGroupDto {
@@ -9,4 +9,8 @@ export class UpdatePublicGroupDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
   name: string;
+
+  @IsOptional()
+  @ApiProperty({ nullable: false, description: 'live which this group belongs to' })
+  liveId: string;
 }

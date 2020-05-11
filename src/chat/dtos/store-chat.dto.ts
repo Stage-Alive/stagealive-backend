@@ -5,4 +5,8 @@ export class StoreChatDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
   liveId: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ nullable: false })
+  groupId: string;
 }

@@ -26,7 +26,7 @@ export class PublicGroupEntity {
   @JoinColumn({ name: 'region_id', referencedColumnName: 'id' })
   region: RegionEntity;
 
-  @Column({ name: 'region_id', type: 'uuid' })
+  @Column({ name: 'region_id', type: 'uuid', nullable: true })
   @ApiProperty({ description: 'The id of region', nullable: false })
   regionId: string;
 

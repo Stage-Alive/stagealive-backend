@@ -6,14 +6,13 @@ import { PrivateGroupController } from './private-group.controller';
 import { PrivateGroupEntity } from './private-group.entity';
 import { PrivateGroupService } from './private-group.service';
 import { UserModule } from 'src/user/user.module';
+import { ChatService } from 'src/chat/chat.service';
+import { ChatEntity } from 'src/chat/chat.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([PrivateGroupEntity, GroupEntity]),
-    UserModule,
-  ],
-  providers: [PrivateGroupService, GroupService],
+  imports: [TypeOrmModule.forFeature([PrivateGroupEntity, ChatEntity, GroupEntity]), UserModule],
+  providers: [PrivateGroupService, GroupService, ChatService],
   controllers: [PrivateGroupController],
-  exports: [PrivateGroupService, GroupService],
+  exports: [PrivateGroupService, GroupService, ChatService],
 })
 export class PrivateGroupModule {}

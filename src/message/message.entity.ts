@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ChatEntity } from '../chat/chat.entity';
 import { UserEntity } from 'src/user/user.entity';
 
-@Entity('messages')
+@Entity({ name: 'messages', orderBy: { createdAt: 'DESC' } })
 export class MessageEntity {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({ description: 'The id of messages', nullable: false })
@@ -36,7 +36,7 @@ export class MessageEntity {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @Column({ name: 'user_id', type: 'uuid' })
+  @Column({ name: 'user_id', type: 'uuid', nullable: true })
   @ApiProperty({ description: 'The id of user', nullable: false })
   userId: string;
 

@@ -7,6 +7,8 @@ export interface LiveInterface {
 
   artistsIds?: string[];
 
+  groupsIds?: string[];
+
   mainBanner: string;
 
   secondaryBanner: string;

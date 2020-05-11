@@ -12,24 +12,21 @@ import { MessageService } from '../message/message.service';
 import { MessageEntity } from 'src/message/message.entity';
 
 @WebSocketGateway()
-export class AppGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor(private readonly messageService: MessageService) {}
 
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('AppGateway');
 
   @SubscribeMessage('msgToServer')
-  handleMessage(
-    client: Socket,
-    payload: { name: string; text: string; chat: string; userId: string },
-  ): void {
+  handleMessage(client: Socket, payload: { name: string; text: string; chat: string; userId: string }): void {
     this.server.to(payload.chat).emit('msgToClient', payload);
-    this.messageService.store({
-      chatId: payload.chat,
-      userId: payload.userId,
-      text: payload.text,
-    });
+    this.messageService.store({ chatId: payload.chat, text: payload.text }, payload.userId);
+    // this.messageService.store({
+    //   chatId: payload.chat,
+    //   userId: payload.userId,
+    //   text: payload.text,
+    // });
   }
 
   @SubscribeMessage('join')

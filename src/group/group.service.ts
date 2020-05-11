@@ -1,16 +1,15 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserService } from 'src/user/user.service';
-import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { GroupInterface } from './group.interface';
 
 @Injectable()
 export class GroupService {
   constructor(
     @InjectRepository(GroupEntity)
     private readonly groupRepository: Repository<GroupEntity>,
-    private readonly userService: UserService,
   ) {}
 
   async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<GroupEntity>> {
@@ -36,9 +35,19 @@ export class GroupService {
     return result.raw.affectedRows > 0;
   }
 
-  async create(data: Partial<GroupEntity>): Promise<GroupEntity> {
-    const group = await this.groupRepository.create(data);
-    return await this.groupRepository.save(group);
+  async create(data: Partial<GroupInterface>): Promise<GroupEntity> {
+    let group = this.groupRepository.create(data);
+    group = await this.groupRepository.save(group);
+
+    if (data.liveId) {
+      await this.groupRepository
+        .createQueryBuilder()
+        .relation(GroupEntity, 'lives')
+        .of(group)
+        .add(data.liveId);
+    }
+
+    return group;
   }
 
   async update(group: GroupEntity, data: Partial<GroupEntity>): Promise<GroupEntity> {
@@ -75,14 +84,4 @@ export class GroupService {
       throw new UnauthorizedException(error);
     }
   }
-  // async invite(request: any, id: string): Promise<GroupEntity> {
-  //   const userId = request.user.id;
-
-  //   const user = await this.userService.show(userId);
-  //   const group = await this.show(id);
-  //   const userOnGroup = await group.users;
-  //   userOnGroup.push(user);
-  //   group.users = userOnGroup;
-  //   return await this.groupRepository.save(group);
-  // }
 }

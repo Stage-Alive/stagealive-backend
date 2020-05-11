@@ -19,6 +19,7 @@ import { GroupEntity } from 'src/group/group.entity';
 import { MessageEntity } from 'src/message/message.entity';
 import { ConfigConst } from 'src/constant/config.const';
 import { LiveEntity } from 'src/live/live.entity';
+import { PrivateGroupEntity } from 'src/private-group/private-group.entity';
 
 @Entity({ name: 'users', orderBy: { createdAt: 'ASC' } })
 export class UserEntity {
@@ -104,4 +105,10 @@ export class UserEntity {
 
   @Column({ name: 'profile_photo', nullable: true })
   profilePhoto: string;
+
+  @OneToMany(
+    () => PrivateGroupEntity,
+    privateGroupEntity => privateGroupEntity.createdBy,
+  )
+  createdPrivateChats: PrivateGroupEntity[];
 }

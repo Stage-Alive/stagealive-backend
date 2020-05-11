@@ -5,4 +5,8 @@ export class UpdatePrivateGroupDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
   name: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ nullable: false, description: 'live which this group belongs to' })
+  liveId: string;
 }

@@ -1,10 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  paginate,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { PrivateGroupEntity } from './private-group.entity';
 import { GroupService } from 'src/group/group.service';
@@ -18,30 +14,19 @@ export class PrivateGroupService {
     private readonly groupService: GroupService,
   ) {}
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<PrivateGroupEntity>> {
-    return await paginate<PrivateGroupEntity>(
-      this.privateGroupRepository,
-      options,
-    );
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<PrivateGroupEntity>> {
+    return await paginate<PrivateGroupEntity>(this.privateGroupRepository, options);
   }
 
   async restore(id: string): Promise<PrivateGroupEntity> {
     await this.privateGroupRepository.restore(id);
-    const groupId = await (await this.privateGroupRepository.findOneOrFail(id))
-      .group.id;
+    const groupId = await (await this.privateGroupRepository.findOneOrFail(id)).group.id;
     await this.groupService.restore(groupId);
     return await this.show(id);
   }
 
   async show(id: string): Promise<PrivateGroupEntity> {
     try {
-      // let result = await this.PrivateGroupRepository
-      //   .createQueryBuilder('public_groups')
-      //   .innerJoinAndSelect('public_groups.group', 'groups', 'groups.id')
-      //   .where('public_groups.id =: id', { id: id })
-      //   .getOne();
       const result = await this.privateGroupRepository.findOneOrFail(id);
       return result;
     } catch (error) {
@@ -51,8 +36,7 @@ export class PrivateGroupService {
 
   async destroy(id: string) {
     try {
-      const group = await (await this.privateGroupRepository.findOneOrFail(id))
-        .group;
+      const group = await (await this.privateGroupRepository.findOneOrFail(id)).group;
       const resultGroup = await this.groupService.destroy(group.id);
       const result = await this.privateGroupRepository.softDelete(id);
       return result.raw.affectedRows > 0 && resultGroup;
@@ -63,25 +47,32 @@ export class PrivateGroupService {
     }
   }
 
-  async store(
-    body: Partial<PrivateGroupInterface>,
-  ): Promise<PrivateGroupEntity> {
+  async store(body: PrivateGroupInterface, userId: string): Promise<PrivateGroupEntity> {
     try {
+      let privateGroupEntity = this.privateGroupRepository.create();
+      privateGroupEntity = await this.privateGroupRepository.save(privateGroupEntity);
+
       const groupEntity = await this.groupService.create(body);
 
-      const privateGroupEntity = await this.privateGroupRepository.create();
-      privateGroupEntity.group = groupEntity;
+      await this.privateGroupRepository
+        .createQueryBuilder()
+        .relation(PrivateGroupEntity, 'group')
+        .of(privateGroupEntity)
+        .set(groupEntity);
 
-      return await this.privateGroupRepository.save(privateGroupEntity);
+      await this.privateGroupRepository
+        .createQueryBuilder()
+        .relation(PrivateGroupEntity, 'createdBy')
+        .of(privateGroupEntity)
+        .set(userId);
+
+      return await this.show(privateGroupEntity.id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async update(
-    id: string,
-    body: Partial<PrivateGroupInterface>,
-  ): Promise<PrivateGroupEntity> {
+  async update(id: string, body: Partial<PrivateGroupInterface>): Promise<PrivateGroupEntity> {
     try {
       const privateGroup = await this.privateGroupRepository.findOneOrFail(id);
       await this.groupService.update(privateGroup.group, body);

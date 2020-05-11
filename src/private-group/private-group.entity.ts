@@ -1,14 +1,17 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { GroupEntity } from 'src/group/group.entity';
+import { UserEntity } from 'src/user/user.entity';
+import {
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  Column,
+} from 'typeorm';
 
 @Entity('private_groups')
 export class PrivateGroupEntity {
@@ -31,4 +34,11 @@ export class PrivateGroupEntity {
   @OneToOne(type => GroupEntity, { eager: true })
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
+
+  @ManyToOne(
+    () => UserEntity,
+    userEntity => userEntity.createdPrivateChats,
+  )
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  createdBy: UserEntity;
 }

@@ -1,24 +1,15 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Query,
-  Req,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, Req, Put, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { RestorePrivateGroupDto } from './dtos/restore-private-group.dto';
 import { StorePrivateGroupDto } from './dtos/store-private-group.dto';
 import { PrivateGroupService } from './private-group.service';
 import { UpdatePrivateGroupDto } from './dtos/update-private-group.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('privategroups')
 @ApiTags('privategroups')
+@UseGuards(AuthGuard('jwt'))
 export class PrivateGroupController {
   constructor(private readonly privateGroupService: PrivateGroupService) {}
 
@@ -52,7 +43,8 @@ export class PrivateGroupController {
   @ApiResponse({ status: 201, description: 'Store a private group' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async store(@Body() body: StorePrivateGroupDto, @Req() req) {
-    const result = await this.privateGroupService.store(body);
+    const userId: string = req.user.id;
+    const result = await this.privateGroupService.store(body, userId);
 
     return {
       message: 'Store a private group',
@@ -65,11 +57,7 @@ export class PrivateGroupController {
   @Put(':id')
   @ApiResponse({ status: 201, description: 'Update a private group' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
-  async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: UpdatePrivateGroupDto,
-    @Req() req,
-  ) {
+  async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: UpdatePrivateGroupDto, @Req() req) {
     const result = await this.privateGroupService.update(id, body);
 
     return {

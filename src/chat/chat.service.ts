@@ -2,11 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ChatEntity } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ChatService {
@@ -15,9 +11,7 @@ export class ChatService {
     private readonly chatRepository: Repository<ChatEntity>,
   ) {}
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<ChatEntity>> {
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<ChatEntity>> {
     return await paginate<ChatEntity>(this.chatRepository, options);
   }
 
@@ -28,8 +22,14 @@ export class ChatService {
 
   async show(id: string): Promise<ChatEntity> {
     try {
-      const chat = await this.chatRepository.findOneOrFail(id);
-      return chat;
+      // const chat = await this.chatRepository.findOneOrFail(id, { relations: ['messages'] });
+      return await this.chatRepository
+        .createQueryBuilder('chats')
+        .leftJoinAndSelect('chats.messages', 'messages')
+        .limit(10)
+        .orderBy('messages.createdAt', 'DESC')
+        .where({ id })
+        .getOne();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

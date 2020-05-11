@@ -6,9 +6,9 @@ export class StoreMessageDto {
   @ApiProperty({ nullable: false })
   chatId: string;
 
-  @IsNotEmpty()
-  @ApiProperty({ nullable: false })
-  userId: string;
+  // @IsNotEmpty()
+  // @ApiProperty({ nullable: false })
+  // userId: string;
 
   @IsNotEmpty()
   @ApiProperty({ nullable: false })

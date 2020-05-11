@@ -1,12 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class GroupService {
@@ -15,6 +12,10 @@ export class GroupService {
     private readonly groupRepository: Repository<GroupEntity>,
     private readonly userService: UserService,
   ) {}
+
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<GroupEntity>> {
+    return await paginate<GroupEntity>(this.groupRepository, options);
+  }
 
   async show(id: string): Promise<GroupEntity> {
     try {
@@ -40,10 +41,7 @@ export class GroupService {
     return await this.groupRepository.save(group);
   }
 
-  async update(
-    group: GroupEntity,
-    data: Partial<GroupEntity>,
-  ): Promise<GroupEntity> {
+  async update(group: GroupEntity, data: Partial<GroupEntity>): Promise<GroupEntity> {
     group = await this.groupRepository.merge(group, data);
     return await this.groupRepository.save(group);
   }

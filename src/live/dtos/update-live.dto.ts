@@ -25,4 +25,8 @@ export class UpdateLiveDto {
   @IsNotEmpty()
   @ApiProperty({ nullable: false })
   secondaryBanner: string;
+
+  @IsOptional()
+  @ApiProperty({ nullable: false })
+  groupsIds: string[];
 }

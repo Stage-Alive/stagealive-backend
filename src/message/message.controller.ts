@@ -1,21 +1,13 @@
-import {
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Query,
-  Req,
-  Controller,
-  Delete,
-  Post,
-  Body,
-} from '@nestjs/common';
+import { Get, Param, ParseUUIDPipe, Query, Req, Controller, Delete, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
 import { MessageService } from './message.service';
 import { StoreMessageDto } from './dtos/store-message.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('messages')
 @ApiTags('messages')
+@UseGuards(AuthGuard('jwt'))
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 
@@ -49,7 +41,9 @@ export class MessageController {
   @ApiResponse({ status: 201, description: 'Store a message' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async store(@Body() body: StoreMessageDto, @Req() req) {
-    const result = await this.messageService.store(body);
+    const userId: string = req.user.id;
+
+    const result = await this.messageService.store(body, userId);
 
     return {
       message: 'Store a message',

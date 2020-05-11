@@ -2,11 +2,8 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { MessageEntity } from './message.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { MessageInterface } from './message.interface';
 
 @Injectable()
 export class MessageService {
@@ -15,9 +12,7 @@ export class MessageService {
     private readonly messageRepository: Repository<MessageEntity>,
   ) {}
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<MessageEntity>> {
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<MessageEntity>> {
     return await paginate<MessageEntity>(this.messageRepository, options);
   }
 
@@ -40,8 +35,16 @@ export class MessageService {
     return result.raw.affectedRows > 0;
   }
 
-  async store(data: Partial<MessageEntity>): Promise<MessageEntity> {
-    const message = await this.messageRepository.create(data);
-    return await this.messageRepository.save(message);
+  async store(data: MessageInterface, userId: string): Promise<MessageEntity> {
+    const message = this.messageRepository.create(data);
+    await this.messageRepository.save(message);
+
+    await this.messageRepository
+      .createQueryBuilder()
+      .relation(MessageEntity, 'user')
+      .of(message)
+      .set(userId);
+
+    return await this.show(message.id);
   }
 }

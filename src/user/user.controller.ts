@@ -69,11 +69,7 @@ export class UserController {
   @Patch(':id')
   @ApiResponse({ status: 201, description: 'Store a user' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
-  async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: UpdateUserDto,
-    @Req() req,
-  ) {
+  async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: UpdateUserDto, @Req() req) {
     const result = await this.userService.update(id, body);
 
     return {

@@ -7,27 +7,18 @@ import { UserService } from 'src/user/user.service';
 import { AuthInterface } from './auth.interface';
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
   async valideUser(data: Partial<AuthInterface>): Promise<UserEntity> {
-    const facebookProfile = data.profile;
-
-    if (facebookProfile && facebookProfile.id) {
-      const facebookId = data.profile.id;
-      //
-      // if (facebookId) {
-      return this.userService.getUserByFacebookId(facebookId);
-      // }
+    if (data.facebookId) {
+      const user = await this.userService.getUserByFacebookId(data.facebookId);
+      return user;
     }
 
     const email = data.email;
-    const password = await createHmac(
-      ConfigConst.CRIPTO_ALGORITHM,
-      data.password,
-    ).digest(ConfigConst.ENCODE_CRIPTO_ALGORITHM);
+    const password = await createHmac(ConfigConst.CRIPTO_ALGORITHM, data.password).digest(
+      ConfigConst.ENCODE_CRIPTO_ALGORITHM,
+    );
 
     const user = await this.userService.getUserByEmail(email);
 
@@ -37,23 +28,7 @@ export class AuthService {
     return null;
   }
 
-  async createUserBasedOnFacebook(
-    data: Partial<AuthInterface>,
-  ): Promise<UserEntity> {
-    const facebookId = data.profile.id;
-    const name = data.profile.displayName;
-    const email = data.profile.email;
-
-    const user = await this.userService.store({
-      name: name,
-      facebookId: facebookId,
-      email: email,
-    });
-
-    return user;
-  }
-
-  async login(data: AuthInterface) {
+  async login(data: Partial<AuthInterface>) {
     const user = await this.valideUser(data);
     if (!user) {
       throw new UnauthorizedException();
@@ -61,12 +36,12 @@ export class AuthService {
     return { access_token: this.jwtService.sign(data) };
   }
 
-  async loginFacebook(data: AuthInterface) {
+  async loginFacebook(data: Partial<AuthInterface>) {
     const user = await this.valideUser(data);
     if (!user) {
-      throw new UnauthorizedException();
+      data.userTypeId = ConfigConst.USER_TYPE_CONSUMER;
+      return this.userService.store(data);
     }
-    return { access_token: this.jwtService.sign(data) };
   }
 
   me(request: any) {

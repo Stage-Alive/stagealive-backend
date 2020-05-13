@@ -7,11 +7,11 @@ export interface UserInterface {
 
   password: string;
 
-  facebookId?: string;
+  facebookId: string;
 
-  profilePhoto?: string;
+  profilePhoto: string;
 
-  gender?: string;
+  gender: string;
 
-  birthdate?: string;
+  birthdate: string;
 }

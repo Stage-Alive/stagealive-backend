@@ -7,13 +7,4 @@ export class AuthDto {
 
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  accessToken?: string;
-
-  @IsOptional()
-  refreshToken?: string;
-
-  @IsOptional()
-  profile?: string;
 }

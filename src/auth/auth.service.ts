@@ -42,6 +42,7 @@ export class AuthService {
       data.userTypeId = ConfigConst.USER_TYPE_CONSUMER;
       return this.userService.store(data);
     }
+    return { access_token: this.jwtService.sign(data) };
   }
 
   me(request: any) {

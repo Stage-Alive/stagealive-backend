@@ -111,4 +111,10 @@ export class UserEntity {
     privateGroupEntity => privateGroupEntity.createdBy,
   )
   createdPrivateChats: PrivateGroupEntity[];
+
+  @Column({ type: 'datetime', name: 'gender', nullable: true })
+  gender: string;
+
+  @Column({ type: 'datetime', name: 'birthdate', nullable: true })
+  birthdate: string;
 }

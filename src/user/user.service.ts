@@ -1,17 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { UserInterface } from './user.interface';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
+import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { createHmac } from 'crypto';
 import { ConfigConst } from 'src/constant/config.const';
 import { JwtService } from '@nestjs/jwt';
@@ -69,9 +61,9 @@ export class UserService {
   async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.findOneOrFail(id);
-      user = await this.userRepository.merge(user, body);
-      user = await this.userRepository.save(user);
-      return user;
+      this.userRepository.merge(user, body);
+      await this.userRepository.save(user);
+      return await this.show(id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -95,9 +87,7 @@ export class UserService {
     }
   }
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<UserEntity>> {
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<UserEntity>> {
     return await paginate<UserEntity>(this.userRepository, options);
   }
 

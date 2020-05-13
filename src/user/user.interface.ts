@@ -10,4 +10,8 @@ export interface UserInterface {
   facebookId?: string;
 
   profilePhoto?: string;
+
+  gender?: string;
+
+  birthdate?: string;
 }

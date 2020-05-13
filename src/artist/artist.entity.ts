@@ -35,10 +35,10 @@ export class ArtistEntity {
   )
   lives: LiveEntity[];
 
-  @Column({ name: 'contact_phone' })
+  @Column({ name: 'contact_phone', nullable: true })
   contactPhone: string;
 
-  @Column({ name: 'contact_email' })
+  @Column({ name: 'contact_email', nullable: true })
   contactEmail: string;
 
   @Column({ name: 'name' })

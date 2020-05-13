@@ -36,12 +36,12 @@ export class UserEntity {
 
   @Column({
     name: 'email',
-    nullable: false,
+    nullable: true,
     unique: true,
     type: 'varchar',
     length: 255,
   })
-  @ApiProperty({ description: 'Email of user', nullable: false })
+  @ApiProperty({ description: 'Email of user', nullable: true })
   email: string;
 
   @ManyToOne(
@@ -100,7 +100,7 @@ export class UserEntity {
     }
   }
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   facebookId: string;
 
   @Column({ name: 'profile_photo', nullable: true })
@@ -111,4 +111,10 @@ export class UserEntity {
     privateGroupEntity => privateGroupEntity.createdBy,
   )
   createdPrivateChats: PrivateGroupEntity[];
+
+  @Column({ type: 'varchar', name: 'gender', nullable: true })
+  gender: string;
+
+  @Column({ type: 'datetime', name: 'birthdate', nullable: true })
+  birthdate: string;
 }

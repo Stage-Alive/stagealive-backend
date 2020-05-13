@@ -4,7 +4,6 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { FacebookStrategy } from './facebook.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigConst } from 'src/constant/config.const';
 
@@ -18,7 +17,7 @@ import { ConfigConst } from 'src/constant/config.const';
       verifyOptions: { ignoreExpiration: true },
     }),
   ],
-  providers: [AuthService, JwtStrategy, FacebookStrategy],
+  providers: [AuthService, JwtStrategy],
   exports: [AuthService],
   controllers: [AuthController],
 })

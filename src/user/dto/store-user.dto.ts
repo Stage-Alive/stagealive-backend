@@ -6,7 +6,7 @@ export class StoreUserDto {
   @ApiProperty({ description: 'The name of user', nullable: false })
   name: string;
 
-  @IsEmail()
+  @IsOptional()
   @IsNotEmpty()
   @ApiProperty({ description: 'The email of user', nullable: false })
   email: string;
@@ -15,11 +15,15 @@ export class StoreUserDto {
   @ApiProperty({ description: 'The type of user', nullable: false })
   userTypeId: string;
 
-  @IsNotEmpty()
-  @ApiProperty({ description: 'The password of user', nullable: false })
+  @IsOptional()
+  @ApiProperty({ description: 'The password of user', nullable: true })
   password: string;
 
   @IsOptional()
-  @ApiProperty({ description: 'The password of user', nullable: false })
-  profilePhoto?: string;
+  @ApiProperty({ description: 'The url of profile photo', nullable: true })
+  profilePhoto: string;
+
+  @IsOptional()
+  @ApiProperty({ description: 'The facebook id of user', nullable: true })
+  facebookId: string;
 }

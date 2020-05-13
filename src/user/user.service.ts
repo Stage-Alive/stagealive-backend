@@ -1,17 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { UserInterface } from './user.interface';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
+import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 import { createHmac } from 'crypto';
 import { ConfigConst } from 'src/constant/config.const';
 import { JwtService } from '@nestjs/jwt';
@@ -38,8 +30,15 @@ export class UserService {
     }
   }
 
+  private enoughParams(body: Partial<UserInterface>): boolean {
+    if ((body.facebookId && body.name && body.email) || (body.password && body.email)) {
+      return true;
+    }
+    return false;
+  }
+
   async store(body: Partial<UserInterface>): Promise<any> {
-    try {
+    if (this.enoughParams(body)) {
       let user = await this.userRepository.create(body);
       user = await this.userRepository.save(user);
       const userStr = JSON.stringify(user);
@@ -48,8 +47,8 @@ export class UserService {
         access_token: this.jwtService.sign(userStr),
       };
       return data;
-    } catch (error) {
-      throw new InternalServerErrorException(error);
+    } else {
+      throw new BadRequestException('Must contain a {facebookId, name, email} or {email and password}');
     }
   }
 
@@ -69,9 +68,9 @@ export class UserService {
   async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {
     try {
       let user = await this.userRepository.findOneOrFail(id);
-      user = await this.userRepository.merge(user, body);
-      user = await this.userRepository.save(user);
-      return user;
+      this.userRepository.merge(user, body);
+      await this.userRepository.save(user);
+      return await this.show(id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -95,9 +94,7 @@ export class UserService {
     }
   }
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<UserEntity>> {
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<UserEntity>> {
     return await paginate<UserEntity>(this.userRepository, options);
   }
 
@@ -106,6 +103,6 @@ export class UserService {
   }
 
   async getUserByFacebookId(facebookId: string): Promise<UserEntity> {
-    return await this.userRepository.findOneOrFail({ facebookId });
+    return await this.userRepository.findOne({ facebookId });
   }
 }

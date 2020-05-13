@@ -1,11 +1,11 @@
 export interface AuthInterface {
+  name: string;
+
   email: string;
 
   password: string;
 
-  accessToken?: string;
+  userTypeId: string;
 
-  refreshToken?: string;
-
-  profile?: any;
+  facebookId: string;
 }

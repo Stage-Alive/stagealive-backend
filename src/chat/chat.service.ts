@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { ChatInterface } from './chat.interface';
 import { async } from 'rxjs/internal/scheduler/async';
+import { GroupEntity } from 'src/group/group.entity';
 
 @Injectable()
 export class ChatService {
@@ -45,6 +46,21 @@ export class ChatService {
   async destroy(id: string): Promise<boolean> {
     const result = await this.chatRepository.softDelete(id);
     return result.raw.affectedRows > 0;
+  }
+
+  async removeChatLives(groups: GroupEntity[], liveId: string) {
+    await Promise.all(
+      groups.map(async group => {
+        const groupId = group.id;
+        const chat = await this.chatRepository.findOneOrFail({ groupId: groupId });
+
+        await this.chatRepository
+          .createQueryBuilder()
+          .relation(ChatEntity, 'live')
+          .of(chat)
+          .set(null);
+      }),
+    );
   }
 
   async updateChatLives(groupsIds: string[], liveId: string) {

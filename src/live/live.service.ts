@@ -103,6 +103,8 @@ export class LiveService {
       .relation(LiveEntity, 'groups')
       .of(id)
       .remove(allGroups);
+
+    await this.chatService.removeChatLives(allGroups, id);
   }
 
   async update(id: string, body: Partial<LiveInterface>): Promise<LiveEntity> {

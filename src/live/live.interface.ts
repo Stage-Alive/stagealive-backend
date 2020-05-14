@@ -12,4 +12,6 @@ export interface LiveInterface {
   mainBanner: string;
 
   secondaryBanner: string;
+
+  description: string;
 }

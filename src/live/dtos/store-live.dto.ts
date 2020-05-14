@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsDateString, IsString, maxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StoreLiveDto {
@@ -19,6 +19,7 @@ export class StoreLiveDto {
   artistsIds: string[];
 
   @IsNotEmpty()
+  @IsDateString()
   @ApiProperty({ nullable: false })
   startAt: string;
 
@@ -30,7 +31,11 @@ export class StoreLiveDto {
   @ApiProperty({ nullable: false })
   secondaryBanner: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({ nullable: false })
   groupsIds: string[];
+
+  @IsString()
+  @ApiProperty({ nullable: false, maxLength: 30 })
+  description: string;
 }

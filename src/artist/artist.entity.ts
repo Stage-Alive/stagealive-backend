@@ -29,9 +29,8 @@ export class ArtistEntity {
   deletedAt: string;
 
   @ManyToMany(
-    type => LiveEntity,
+    () => LiveEntity,
     live => live.artists,
-    { nullable: true },
   )
   lives: LiveEntity[];
 

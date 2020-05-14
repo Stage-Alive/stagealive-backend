@@ -68,9 +68,9 @@ export class PublicGroupService {
         .of(publicGroupEntity)
         .set(body.regionId);
 
-      if (body.liveId) {
-        await this.chatService.store({ liveId: body.liveId, groupId: groupEntity.id });
-      }
+      // if (body.liveId) {
+      await this.chatService.store({ groupId: groupEntity.id });
+      // }
       return await this.show(publicGroupEntity.id);
     } catch (error) {
       throw new InternalServerErrorException(error);

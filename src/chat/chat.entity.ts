@@ -34,8 +34,8 @@ export class ChatEntity {
   @JoinColumn({ name: 'live_id', referencedColumnName: 'id' })
   live: LiveEntity;
 
-  @Column({ name: 'live_id', type: 'uuid' })
-  @ApiProperty({ description: 'The id of live', nullable: false })
+  @Column({ name: 'live_id', type: 'uuid', nullable: true })
+  @ApiProperty({ description: 'The id of live', nullable: true })
   liveId: string;
 
   @ManyToOne(

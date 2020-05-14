@@ -104,12 +104,15 @@ export class LiveEntity {
   @ApiProperty({ description: 'The deletion date', nullable: true })
   deletedAt: string;
 
-  @Column({ name: 'start_at' })
+  @Column({ name: 'start_at', type: 'datetime', nullable: false })
   startAt: string;
 
-  @Column({ name: 'main_banner' })
+  @Column({ name: 'main_banner', nullable: true })
   mainBanner: string;
 
-  @Column({ name: 'secondary_banner' })
+  @Column({ name: 'secondary_banner', nullable: false })
   secondaryBanner: string;
+
+  @Column({ name: 'description', nullable: false, length: 30 })
+  description: string;
 }

@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { ChatService } from 'src/chat/chat.service';
 import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
@@ -10,15 +11,16 @@ export class LiveService {
   constructor(
     @InjectRepository(LiveEntity)
     private readonly liveRepository: Repository<LiveEntity>,
+    private readonly chatService: ChatService,
   ) {}
 
   async show(id: string): Promise<LiveEntity> {
     try {
       return await this.liveRepository
         .createQueryBuilder('lives')
-        .leftJoinAndSelect('lives.groups', 'groups')
-        .leftJoinAndSelect('lives.artists', 'artists')
         .leftJoinAndSelect('lives.chats', 'chats')
+        .leftJoinAndSelect('chats.group', 'groups')
+        .leftJoinAndSelect('lives.artists', 'artists')
         .where({ id })
         .getOne();
     } catch (error) {
@@ -38,7 +40,7 @@ export class LiveService {
   }
 
   async store(data: Partial<LiveInterface>): Promise<LiveEntity> {
-    const live = await this.liveRepository.create(data);
+    const live = this.liveRepository.create(data);
     await this.liveRepository.save(live);
     const id = live.id;
 
@@ -79,6 +81,13 @@ export class LiveService {
         .relation(LiveEntity, 'groups')
         .of(id)
         .add(groupsIds);
+
+      await this.chatService.updateChatLives(groupsIds, id);
+
+      // await this.liveRepository()
+      // .createQueryBuilder("lives")
+      // .relation(ChatEntity, "live")
+      // .of()
     }
   }
 
@@ -117,9 +126,15 @@ export class LiveService {
   }
 
   async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<LiveEntity>> {
-    return paginate<LiveEntity>(this.liveRepository, options, {
-      relations: ['chats', 'artists', 'groups'],
-    });
+    const { page, limit, ...otherOptions } = options;
+
+    const queryBuilder = this.liveRepository
+      .createQueryBuilder('lives')
+      .leftJoinAndSelect('lives.chats', 'chats')
+      .leftJoinAndSelect('chats.group', 'groups')
+      .leftJoinAndSelect('lives.artists', 'artists');
+
+    return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10, ...otherOptions });
   }
 
   async watch(id: string, request: any): Promise<Boolean> {

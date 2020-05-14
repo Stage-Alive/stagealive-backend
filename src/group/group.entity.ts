@@ -14,7 +14,7 @@ import { UserEntity } from 'src/user/user.entity';
 import { ChatEntity } from 'src/chat/chat.entity';
 import { LiveEntity } from 'src/live/live.entity';
 
-@Entity('groups')
+@Entity({ name: 'groups', orderBy: { createdAt: 'DESC' } })
 export class GroupEntity {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({ description: 'The id of group', nullable: false })

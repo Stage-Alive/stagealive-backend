@@ -4,6 +4,7 @@ import { ChatEntity } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { ChatInterface } from './chat.interface';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class ChatService {
@@ -16,9 +17,9 @@ export class ChatService {
     return await paginate<ChatEntity>(this.chatRepository, options);
   }
 
-  async store(data: ChatInterface): Promise<ChatEntity> {
-    const chat = await this.chatRepository.create(data);
-    return this.chatRepository.save(chat);
+  async store(data: Partial<ChatInterface>): Promise<ChatEntity> {
+    const chat = this.chatRepository.create(data);
+    return await this.chatRepository.save(chat);
   }
 
   async show(id: string): Promise<ChatEntity> {
@@ -46,8 +47,17 @@ export class ChatService {
     return result.raw.affectedRows > 0;
   }
 
-  // async create(data: Partial<ChatEntity>): Promise<ChatEntity> {
-  //   const chat = await this.chatRepository.create(data);
-  //   return await this.chatRepository.save(chat);
-  // }
+  async updateChatLives(groupsIds: string[], liveId: string) {
+    await Promise.all(
+      groupsIds.map(async groupId => {
+        const chat = await this.chatRepository.findOneOrFail({ groupId: groupId });
+
+        await this.chatRepository
+          .createQueryBuilder()
+          .relation(ChatEntity, 'live')
+          .of(chat)
+          .set(liveId);
+      }),
+    );
+  }
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateLiveDto {
@@ -29,4 +29,8 @@ export class UpdateLiveDto {
   @IsOptional()
   @ApiProperty({ nullable: false })
   groupsIds: string[];
+
+  @IsString()
+  @ApiProperty({ nullable: false, maxLength: 30 })
+  description: string;
 }

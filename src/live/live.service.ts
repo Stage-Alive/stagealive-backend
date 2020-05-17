@@ -83,11 +83,6 @@ export class LiveService {
         .add(groupsIds);
 
       await this.chatService.updateChatLives(groupsIds, id);
-
-      // await this.liveRepository()
-      // .createQueryBuilder("lives")
-      // .relation(ChatEntity, "live")
-      // .of()
     }
   }
 
@@ -117,7 +112,7 @@ export class LiveService {
       await this.removeGroups(id);
       await this.updateGroups(id, body.groupsIds);
 
-      live = await this.liveRepository.merge(live, body);
+      live = this.liveRepository.merge(live, body);
 
       await this.liveRepository.save(live);
 

@@ -115,4 +115,7 @@ export class LiveEntity {
 
   @Column({ name: 'description', nullable: false, length: 30 })
   description: string;
+
+  @Column({ nullable: true, type: 'boolean', default: false })
+  highlighted: boolean;
 }

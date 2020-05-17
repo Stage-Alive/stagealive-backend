@@ -14,4 +14,6 @@ export interface LiveInterface {
   secondaryBanner: string;
 
   description: string;
+
+  highlighted: boolean;
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsDateString, IsString, maxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsDateString, IsString, maxLength, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class StoreLiveDto {
@@ -38,4 +38,9 @@ export class StoreLiveDto {
   @IsString()
   @ApiProperty({ nullable: false, maxLength: 30 })
   description: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ nullable: true, default: false })
+  highlighted: boolean;
 }

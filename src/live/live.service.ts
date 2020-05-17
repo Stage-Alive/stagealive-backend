@@ -5,6 +5,7 @@ import { ChatService } from 'src/chat/chat.service';
 import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
+import { IndexLiveInterface } from './live.index.interface';
 
 @Injectable()
 export class LiveService {
@@ -122,8 +123,10 @@ export class LiveService {
     }
   }
 
-  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<LiveEntity>> {
-    const { page, limit, ...otherOptions } = options;
+  async paginate(
+    options: IndexLiveInterface = { page: 1, limit: 10, highlighted: false },
+  ): Promise<Pagination<LiveEntity>> {
+    const { page, limit, highlighted } = options;
 
     const queryBuilder = this.liveRepository
       .createQueryBuilder('lives')
@@ -131,7 +134,11 @@ export class LiveService {
       .leftJoinAndSelect('chats.group', 'groups')
       .leftJoinAndSelect('lives.artists', 'artists');
 
-    return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10, ...otherOptions });
+    if (highlighted) {
+      queryBuilder.where({ highlighted: 1 });
+    }
+
+    return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10 });
   }
 
   async watch(id: string, request: any): Promise<Boolean> {

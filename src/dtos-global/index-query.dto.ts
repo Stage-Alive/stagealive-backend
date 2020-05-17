@@ -1,6 +1,6 @@
-import { IsOptional, Min } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsOptional, Min } from 'class-validator';
 
 export class IndexQueryDto {
   @IsOptional()
@@ -22,4 +22,11 @@ export class IndexQueryDto {
     minimum: 1,
   })
   limit: number;
+
+  @IsOptional()
+  @ApiProperty({
+    description: 'highlighted',
+    default: false,
+  })
+  highlighted: boolean;
 }

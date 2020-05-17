@@ -124,7 +124,7 @@ export class LiveService {
   }
 
   async paginate(
-    options: IndexLiveInterface = { page: 1, limit: 10, highlighted: false },
+    options: IndexLiveInterface = { page: 1, limit: 10, highlighted: null },
   ): Promise<Pagination<LiveEntity>> {
     const { page, limit, highlighted } = options;
 
@@ -135,7 +135,7 @@ export class LiveService {
       .leftJoinAndSelect('lives.artists', 'artists');
 
     if (highlighted) {
-      queryBuilder.where({ highlighted: 1 });
+      queryBuilder.where({ highlighted: highlighted });
     }
 
     return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10 });

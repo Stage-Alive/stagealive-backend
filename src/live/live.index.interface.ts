@@ -1,5 +1,5 @@
 import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 export interface IndexLiveInterface extends IPaginationOptions {
-  highlighted: boolean;
+  highlighted: number;
 }

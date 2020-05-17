@@ -5,6 +5,8 @@ import { ConfigConst } from 'src/constant/config.const';
 import { UserEntity } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AuthInterface } from './auth.interface';
+import { ForgetDto } from './dtos/forget.dto';
+import { ResetDto } from './dtos/reset.dto';
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService, private jwtService: JwtService) {}
@@ -45,7 +47,15 @@ export class AuthService {
     return { access_token: this.jwtService.sign(data) };
   }
 
-  me(request: any) {
-    return request.user;
+  async me(request: any) {
+    return await this.userService.show(request.user.id);
+  }
+
+  async forget(body: ForgetDto) {
+    return this.userService.forget(body.email);
+  }
+
+  async reset(body: ResetDto) {
+    return this.userService.reset(body.rememberToken, body.password);
   }
 }

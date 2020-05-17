@@ -1,4 +1,10 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserInterface } from './user.interface';
 import { UserEntity } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +13,7 @@ import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginat
 import { createHmac } from 'crypto';
 import { ConfigConst } from 'src/constant/config.const';
 import { JwtService } from '@nestjs/jwt';
+import { suid } from 'rand-token';
 
 @Injectable()
 export class UserService {
@@ -67,7 +74,12 @@ export class UserService {
 
   async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {
     try {
-      let user = await this.userRepository.findOneOrFail(id);
+      let user;
+      try {
+        user = await this.userRepository.findOneOrFail(id);
+      } catch (error) {
+        throw new NotFoundException(error);
+      }
       this.userRepository.merge(user, body);
       await this.userRepository.save(user);
       return await this.show(id);
@@ -90,7 +102,7 @@ export class UserService {
       const user = await this.userRepository.findOneOrFail(id);
       return user;
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new NotFoundException(error);
     }
   }
 
@@ -99,10 +111,39 @@ export class UserService {
   }
 
   async getUserByEmail(email: string): Promise<UserEntity> {
-    return await this.userRepository.findOneOrFail({ email });
+    try {
+      return await this.userRepository.findOneOrFail({ email });
+    } catch (error) {
+      throw new NotFoundException();
+    }
   }
 
   async getUserByFacebookId(facebookId: string): Promise<UserEntity> {
-    return await this.userRepository.findOne({ facebookId });
+    try {
+      return await this.userRepository.findOne({ facebookId });
+    } catch (error) {
+      throw new NotFoundException();
+    }
+  }
+
+  async forget(email: string): Promise<Boolean> {
+    const user = await this.getUserByEmail(email);
+    const rememberToken = suid(16);
+    console.log(rememberToken);
+    user.rememberToken = rememberToken;
+    await this.userRepository.save(user);
+    return true;
+  }
+
+  async reset(rememberToken: string, password: string): Promise<Boolean> {
+    let user: UserEntity;
+    try {
+      user = await this.userRepository.findOneOrFail({ rememberToken });
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+    user.password = password;
+    await this.userRepository.save(user);
+    return true;
   }
 }

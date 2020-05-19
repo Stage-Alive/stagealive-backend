@@ -47,7 +47,9 @@ export class GroupController {
   @UseGuards(AuthGuard('jwt'))
   @Put(':id/subscribe')
   async subscribe(@Request() request, @Param('id', new ParseUUIDPipe()) id: string) {
-    const result = await this.groupService.subscribe(request, id);
+    const userId = request.user.id;
+
+    const result = await this.groupService.subscribe(userId, id);
     return {
       message: 'Subscribe user on group',
       object: 'group',

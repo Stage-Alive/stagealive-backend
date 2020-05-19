@@ -6,6 +6,7 @@ import { PrivateGroupEntity } from './private-group.entity';
 import { GroupService } from 'src/group/group.service';
 import { PrivateGroupInterface } from './private-group.interface';
 import { ChatService } from 'src/chat/chat.service';
+import { GroupEntity } from 'src/group/group.entity';
 
 @Injectable()
 export class PrivateGroupService {
@@ -29,7 +30,12 @@ export class PrivateGroupService {
 
   async show(id: string): Promise<PrivateGroupEntity> {
     try {
-      const result = await this.privateGroupRepository.findOneOrFail(id);
+      const result = await this.privateGroupRepository
+        .createQueryBuilder('private_groups')
+        .leftJoinAndSelect('private_groups.group', 'groups')
+        .leftJoinAndSelect('groups.chats', 'chats')
+        .where({ id })
+        .getOne();
       return result;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -68,6 +74,7 @@ export class PrivateGroupService {
         .of(privateGroupEntity)
         .set(userId);
 
+      await this.groupService.subscribe(userId, groupEntity.id);
       await this.chatService.store({ liveId: body.liveId, groupId: groupEntity.id });
 
       return await this.show(privateGroupEntity.id);

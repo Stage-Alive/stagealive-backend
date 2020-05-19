@@ -1,16 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Put,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
@@ -21,11 +9,14 @@ import { LiveService } from './live.service';
 
 @Controller('lives')
 @ApiTags('lives')
+@UseGuards(AuthGuard('jwt'))
 export class LiveController {
   constructor(private readonly liveService: LiveService) {}
 
   @Get()
   async index(@Req() req, @Query() query?: IndexQueryDto) {
+    const userId = req.user.id;
+
     const result = await this.liveService.paginate(query);
 
     return {
@@ -40,7 +31,9 @@ export class LiveController {
   @ApiResponse({ status: 201, description: 'Get a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async show(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
-    const result = await this.liveService.show(id);
+    const userId = req.user.id;
+
+    const result = await this.liveService.show(id, userId);
 
     return {
       message: 'Get a live',
@@ -54,7 +47,9 @@ export class LiveController {
   @ApiResponse({ status: 201, description: 'Store a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async store(@Body() body: StoreLiveDto, @Req() req) {
-    const result = await this.liveService.store(body);
+    const userId = req.user.id;
+
+    const result = await this.liveService.store(body, userId);
 
     return {
       message: 'Store a live',
@@ -67,12 +62,10 @@ export class LiveController {
   @Put(':id')
   @ApiResponse({ status: 201, description: 'Update a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
-  async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() body: UpdateLiveDto,
-    @Req() req,
-  ) {
-    const result = await this.liveService.update(id, body);
+  async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: UpdateLiveDto, @Req() req) {
+    const userId = req.user.id;
+
+    const result = await this.liveService.update(id, body, userId);
 
     return {
       message: 'Update a live',
@@ -103,7 +96,9 @@ export class LiveController {
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   @ApiResponse({ status: 404, description: 'Public not found' })
   async restore(@Body() body: RestoreLiveDto, @Req() req) {
-    const result = await this.liveService.restore(body.id);
+    const userId = req.user.id;
+
+    const result = await this.liveService.restore(body.id, userId);
 
     return {
       message: 'Restore a removed live',
@@ -116,7 +111,8 @@ export class LiveController {
   @Post(':id/watch')
   @UseGuards(AuthGuard('jwt'))
   async watch(@Param('id', new ParseUUIDPipe()) id: string, @Req() request) {
-    const result = await this.liveService.watch(id, request);
+    const userId = request.user.id;
+    const result = await this.liveService.watch(id, userId);
     return {
       message: 'Watching live',
       object: 'live',

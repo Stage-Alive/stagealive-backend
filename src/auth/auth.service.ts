@@ -18,7 +18,7 @@ export class AuthService {
     }
 
     const email = data.email;
-    const password = await createHmac(ConfigConst.CRIPTO_ALGORITHM, data.password).digest(
+    const password = createHmac(ConfigConst.CRIPTO_ALGORITHM, data.password).digest(
       ConfigConst.ENCODE_CRIPTO_ALGORITHM,
     );
 
@@ -35,7 +35,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return { access_token: this.jwtService.sign(data) };
+    return this.generateUserToken(user);
   }
 
   async loginFacebook(data: Partial<AuthInterface>) {
@@ -44,7 +44,7 @@ export class AuthService {
       data.userTypeId = ConfigConst.USER_TYPE_CONSUMER;
       return this.userService.store(data);
     }
-    return { access_token: this.jwtService.sign(data) };
+    return this.generateUserToken(user);
   }
 
   async me(request: any) {
@@ -57,5 +57,10 @@ export class AuthService {
 
   async reset(body: ResetDto) {
     return this.userService.reset(body.rememberToken, body.password);
+  }
+
+  generateUserToken(user: UserEntity) {
+    const token = this.jwtService.sign(user.email);
+    return { access_token: token };
   }
 }

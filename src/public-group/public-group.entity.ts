@@ -30,9 +30,6 @@ export class PublicGroupEntity {
   @ApiProperty({ description: 'The id of region', nullable: false })
   regionId: string;
 
-  // @Column({ type: 'varchar', length: 255 })
-  // name: string;
-
   @CreateDateColumn({ name: 'created_at' })
   @ApiProperty({ description: 'The registration date', nullable: true })
   createdAt: string;
@@ -48,7 +45,4 @@ export class PublicGroupEntity {
   @OneToOne(type => GroupEntity, { eager: true })
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
-
-  // @Column({ name: 'group_id' })
-  // groupId: string;
 }

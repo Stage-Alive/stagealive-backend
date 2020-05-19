@@ -4,6 +4,8 @@ import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginat
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { GroupInterface } from './group.interface';
+import { PublicGroupEntity } from 'src/public-group/public-group.entity';
+import { async } from 'rxjs/internal/scheduler/async';
 
 @Injectable()
 export class GroupService {
@@ -52,14 +54,13 @@ export class GroupService {
   }
 
   async update(group: GroupEntity, data: Partial<GroupInterface>): Promise<GroupEntity> {
-    group = await this.groupRepository.merge(group, data);
+    group = this.groupRepository.merge(group, data);
     await this.groupRepository.save(group);
     await this.updateGroupsLives(group.id, data.liveId);
     return group;
   }
 
-  async subscribe(request: any, id: string): Promise<Boolean> {
-    const userId = request.user.id;
+  async subscribe(userId: string, id: string): Promise<Boolean> {
     try {
       await this.groupRepository
         .createQueryBuilder()
@@ -86,5 +87,18 @@ export class GroupService {
     } catch (error) {
       throw new UnauthorizedException(error);
     }
+  }
+
+  async subscribeInAllPublicGroups(userId: string, liveId: string) {
+    const allPublicGroups = await this.groupRepository
+      .createQueryBuilder('groups')
+      .leftJoin('groups.lives', 'lives')
+      .where('lives.id = :liveId', { liveId: liveId })
+      .leftJoin(PublicGroupEntity, 'public_groups', 'public_groups.group_id = groups.id')
+      .getMany();
+
+    allPublicGroups.map(async group => {
+      await this.subscribe(userId, group.id);
+    });
   }
 }

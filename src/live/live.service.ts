@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
 import { IndexLiveInterface } from './live.index.interface';
+import { GroupService } from 'src/group/group.service';
 
 @Injectable()
 export class LiveService {
@@ -13,25 +14,28 @@ export class LiveService {
     @InjectRepository(LiveEntity)
     private readonly liveRepository: Repository<LiveEntity>,
     private readonly chatService: ChatService,
+    private readonly groupService: GroupService,
   ) {}
 
-  async show(id: string): Promise<LiveEntity> {
+  async show(id: string, userId: string): Promise<LiveEntity> {
     try {
       return await this.liveRepository
         .createQueryBuilder('lives')
         .leftJoinAndSelect('lives.chats', 'chats')
         .leftJoinAndSelect('chats.group', 'groups')
-        .leftJoinAndSelect('lives.artists', 'artists')
+        .innerJoin('groups.users', 'users')
+        .where('users.id = :id', { id: userId })
         .where({ id })
+        .orderBy('groups.created_at', 'DESC')
         .getOne();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async restore(id: string): Promise<LiveEntity> {
+  async restore(id: string, userId: string): Promise<LiveEntity> {
     await this.liveRepository.restore(id);
-    return this.show(id);
+    return this.show(id, userId);
   }
 
   async destroy(id: string): Promise<boolean> {
@@ -40,7 +44,7 @@ export class LiveService {
     return result.raw.affectedRows > 0;
   }
 
-  async store(data: Partial<LiveInterface>): Promise<LiveEntity> {
+  async store(data: Partial<LiveInterface>, userId: string): Promise<LiveEntity> {
     const live = this.liveRepository.create(data);
     await this.liveRepository.save(live);
     const id = live.id;
@@ -48,7 +52,7 @@ export class LiveService {
     await this.updateArtists(id, data.artistsIds);
     await this.updateGroups(id, data.groupsIds);
 
-    return await this.show(id);
+    return await this.show(id, userId);
   }
 
   private async removeArtists(id: string) {
@@ -103,7 +107,7 @@ export class LiveService {
     await this.chatService.removeChatLives(allGroups, id);
   }
 
-  async update(id: string, body: Partial<LiveInterface>): Promise<LiveEntity> {
+  async update(id: string, body: Partial<LiveInterface>, userId: string): Promise<LiveEntity> {
     try {
       let live = await this.liveRepository.findOneOrFail(id);
 
@@ -117,7 +121,7 @@ export class LiveService {
 
       await this.liveRepository.save(live);
 
-      return await this.show(id);
+      return await this.liveRepository.findOne(live.id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -141,14 +145,15 @@ export class LiveService {
     return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10 });
   }
 
-  async watch(id: string, request: any): Promise<Boolean> {
-    const userId = request.user.id;
+  async watch(id: string, userId: string): Promise<Boolean> {
     try {
       await this.liveRepository
         .createQueryBuilder()
         .relation(LiveEntity, 'users')
         .of(id)
         .add(userId);
+
+      await this.groupService.subscribeInAllPublicGroups(userId, id);
     } catch (error) {
       if (error.code != 'ER_DUP_ENTRY') {
         throw new UnauthorizedException(error);

@@ -17,6 +17,8 @@ import { UserModule } from './user/user.module';
 import { UserTypeModule } from './usertype/usertype.module';
 import { AppGateway } from './websocket/app.gateway';
 import { StorageModule } from './storage/storage.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigConst } from './constant/config.const';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -34,6 +36,11 @@ import { StorageModule } from './storage/storage.module';
     ArtistModule,
     ContactFormModule,
     StorageModule,
+    JwtModule.register({
+      signOptions: {},
+      secret: ConfigConst.JWT_SECRET,
+      verifyOptions: { ignoreExpiration: true },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

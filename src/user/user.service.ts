@@ -1,19 +1,11 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-  BadRequestException,
-  NotFoundException,
-} from '@nestjs/common';
-import { UserInterface } from './user.interface';
-import { UserEntity } from './user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
-import { createHmac } from 'crypto';
-import { ConfigConst } from 'src/constant/config.const';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { suid } from 'rand-token';
+import { Repository } from 'typeorm';
+import { UserEntity } from './user.entity';
+import { UserInterface } from './user.interface';
 
 @Injectable()
 export class UserService {
@@ -46,14 +38,9 @@ export class UserService {
 
   async store(body: Partial<UserInterface>): Promise<any> {
     if (this.enoughParams(body)) {
-      let user = await this.userRepository.create(body);
+      let user = this.userRepository.create(body);
       user = await this.userRepository.save(user);
-      const userStr = JSON.stringify(user);
-      const data = {
-        ...user,
-        access_token: this.jwtService.sign(userStr),
-      };
-      return data;
+      return this.generateUserToken(user);
     } else {
       throw new BadRequestException('Must contain a {facebookId, name, email} or {email and password}');
     }
@@ -145,5 +132,10 @@ export class UserService {
     user.password = password;
     await this.userRepository.save(user);
     return true;
+  }
+
+  generateUserToken(user: UserEntity) {
+    const token = this.jwtService.sign({ email: user.email });
+    return { access_token: token };
   }
 }

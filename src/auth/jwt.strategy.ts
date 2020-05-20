@@ -5,6 +5,7 @@ import { UserEntity } from 'src/user/user.entity';
 import { AuthService } from './auth.service';
 import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ConfigConst } from 'src/constant/config.const';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,11 +13,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.SECRET_KEY,
+      secretOrKey: ConfigConst.JWT_SECRET,
     });
   }
 
   async validate(data: AuthInterface): Promise<UserEntity> {
+    // console.log(data);
+    // return true;
     const user = await this.authService.valideUser(data);
     if (!user) {
       throw new UnauthorizedException();

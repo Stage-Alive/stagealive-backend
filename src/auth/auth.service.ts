@@ -7,6 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { AuthInterface } from './auth.interface';
 import { ForgetDto } from './dtos/forget.dto';
 import { ResetDto } from './dtos/reset.dto';
+
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService, private jwtService: JwtService) {}
@@ -15,18 +16,11 @@ export class AuthService {
     if (data.facebookId) {
       const user = await this.userService.getUserByFacebookId(data.facebookId);
       return user;
-    }
-
-    const email = data.email;
-    const password = createHmac(ConfigConst.CRIPTO_ALGORITHM, data.password).digest(
-      ConfigConst.ENCODE_CRIPTO_ALGORITHM,
-    );
-
-    const user = await this.userService.getUserByEmail(email);
-
-    if (user.password == password) {
+    } else if (data.email) {
+      const user = await this.userService.getUserByEmail(data.email);
       return user;
     }
+
     return null;
   }
 
@@ -48,7 +42,9 @@ export class AuthService {
   }
 
   async me(request: any) {
-    return await this.userService.show(request.user.id);
+    const email = request.user.email;
+
+    return await this.userService.getUserByEmail(email);
   }
 
   async forget(body: ForgetDto) {
@@ -60,7 +56,7 @@ export class AuthService {
   }
 
   generateUserToken(user: UserEntity) {
-    const token = this.jwtService.sign(user.email);
+    const token = this.jwtService.sign({ email: user.email });
     return { access_token: token };
   }
 }

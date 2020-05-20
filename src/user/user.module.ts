@@ -1,17 +1,17 @@
-import { UserEntity } from './user.entity';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigConst } from 'src/constant/config.const';
+import { UserController } from './user.controller';
+import { UserEntity } from './user.entity';
+import { UserService } from './user.service';
 
 @Module({
   imports: [
-    PassportModule,
     JwtModule.register({
       signOptions: {},
-      secret: 'f3WPrZ3W+O8X58DnMvKaXUIlVJT6HAXC5xNgtsPApbI=',
+      secret: ConfigConst.JWT_SECRET,
+      verifyOptions: { ignoreExpiration: true },
     }),
     TypeOrmModule.forFeature([UserEntity]),
   ],

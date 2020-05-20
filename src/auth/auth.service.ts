@@ -43,8 +43,9 @@ export class AuthService {
 
   async me(request: any) {
     const email = request.user.email;
-
-    return await this.userService.getUserByEmail(email);
+    const user = await this.userService.getUserByEmail(email);
+    user.password = null;
+    return user;
   }
 
   async forget(body: ForgetDto) {

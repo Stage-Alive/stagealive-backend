@@ -14,7 +14,7 @@ export class LiveController {
 
   @Get()
   async index(@Req() req, @Query() query?: IndexQueryDto) {
-    const userId = req.user.id;
+    // const userId = req.user.id;
 
     const result = await this.liveService.paginate(query);
 

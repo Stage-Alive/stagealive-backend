@@ -26,7 +26,9 @@ export class LiveService {
         .leftJoinAndSelect('lives.chats', 'chats')
         .leftJoinAndSelect('chats.group', 'groups')
         .innerJoin('groups.users', 'users')
+        // .innerJoin('lives.users', 'users')
         .where('users.id = :id', { id: userId })
+        // .where('lives.users.id = :userId', { userId: userId })
         .where({ id })
         .orderBy('groups.created_at', 'DESC')
         .getOne();

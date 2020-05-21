@@ -7,6 +7,7 @@ import { LiveEntity } from './live.entity';
 import { LiveInterface } from './live.interface';
 import { IndexLiveInterface } from './live.index.interface';
 import { GroupService } from 'src/group/group.service';
+import shortid = require('shortid');
 
 @Injectable()
 export class LiveService {
@@ -46,6 +47,8 @@ export class LiveService {
 
   async store(data: Partial<LiveInterface>, userId: string): Promise<LiveEntity> {
     const live = this.liveRepository.create(data);
+    live.invitationtId = shortid.generate();
+
     await this.liveRepository.save(live);
     const id = live.id;
 

@@ -9,7 +9,6 @@ import { LiveService } from './live.service';
 
 @Controller('lives')
 @ApiTags('lives')
-@UseGuards(AuthGuard('jwt'))
 export class LiveController {
   constructor(private readonly liveService: LiveService) {}
 
@@ -28,6 +27,7 @@ export class LiveController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 201, description: 'Get a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async show(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
@@ -44,6 +44,7 @@ export class LiveController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 201, description: 'Store a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async store(@Body() body: StoreLiveDto, @Req() req) {
@@ -60,6 +61,7 @@ export class LiveController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 201, description: 'Update a live' })
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   async update(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: UpdateLiveDto, @Req() req) {
@@ -80,6 +82,7 @@ export class LiveController {
     status: 204,
     description: 'The public was successfully deleted',
   })
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 404, description: 'Region not found' })
   async destroy(@Param('id', new ParseUUIDPipe()) id: string, @Req() req) {
     const result = await this.liveService.destroy(id);
@@ -93,6 +96,7 @@ export class LiveController {
   }
 
   @Post('restore')
+  @UseGuards(AuthGuard('jwt'))
   @ApiResponse({ status: 400, description: 'Invalid fields' })
   @ApiResponse({ status: 404, description: 'Public not found' })
   async restore(@Body() body: RestoreLiveDto, @Req() req) {

@@ -1,11 +1,11 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PublicGroupEntity } from 'src/public-group/public-group.entity';
 import { Repository } from 'typeorm';
 import { GroupEntity } from './group.entity';
 import { GroupInterface } from './group.interface';
-import { PublicGroupEntity } from 'src/public-group/public-group.entity';
-import { async } from 'rxjs/internal/scheduler/async';
+import shortid = require('shortid');
 
 @Injectable()
 export class GroupService {
@@ -48,6 +48,7 @@ export class GroupService {
   }
   async create(data: Partial<GroupInterface>): Promise<GroupEntity> {
     let group = this.groupRepository.create(data);
+    group.invitationtId = shortid.generate();
     group = await this.groupRepository.save(group);
     await this.updateGroupsLives(group.id, data.liveId);
     return group;

@@ -48,6 +48,9 @@ export class GroupEntity {
   @Column({ length: 255 })
   name: string;
 
+  @Column({ name: 'invitation_id', length: 32 })
+  invitationtId: string;
+
   @ManyToMany(
     type => UserEntity,
     user => user.groups,

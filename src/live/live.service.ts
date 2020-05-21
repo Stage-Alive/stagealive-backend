@@ -19,6 +19,7 @@ export class LiveService {
   ) {}
 
   async show(id: string, userId: string): Promise<LiveEntity> {
+    await this.watch(id, userId);
     try {
       return await this.liveRepository
         .createQueryBuilder('lives')

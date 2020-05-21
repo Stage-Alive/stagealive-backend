@@ -38,25 +38,25 @@ export class UserService {
 
   async store(body: Partial<UserInterface>): Promise<any> {
     if (this.enoughParams(body)) {
-      let user = this.userRepository.create(body);
-      user = await this.userRepository.save(user);
-      return this.generateUserToken(user);
+      if (!this.checkEmailOwner(body.email)) {
+        let user = this.userRepository.create(body);
+        user = await this.userRepository.save(user);
+        return this.generateUserToken(user);
+      } else {
+        throw new BadRequestException('This email already exists on database');
+      }
     } else {
       throw new BadRequestException('Must contain a {facebookId, name, email} or {email and password}');
     }
   }
 
-  private async checkEmailOwner(id: string, email: string) {
+  private async checkEmailOwner(email: string) {
     const user = await this.userRepository
       .createQueryBuilder('users')
-      .where('users.id = :id', { id: id })
-      .andWhere('users.email = :email', { email: email })
+      .where('users.email = :email', { email: email })
       .getOne();
 
-    if (!user) {
-      return true;
-    }
-    return false;
+    return user;
   }
 
   async update(id: string, body: Partial<UserInterface>): Promise<UserEntity> {

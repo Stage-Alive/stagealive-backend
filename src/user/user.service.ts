@@ -38,15 +38,16 @@ export class UserService {
 
   async store(body: Partial<UserInterface>): Promise<any> {
     if (this.enoughParams(body)) {
-      if (!this.checkEmailOwner(body.email)) {
-        let user = this.userRepository.create(body);
-        user = await this.userRepository.save(user);
-        return this.generateUserToken(user);
-      } else {
+      const checkUser = await this.checkEmailOwner(body.email);
+
+      if (checkUser) {
         throw new BadRequestException('This email already exists on database');
       }
-    } else {
-      throw new BadRequestException('Must contain a {facebookId, name, email} or {email and password}');
+
+      const user = await this.userRepository.create(body);
+      await this.userRepository.save(user);
+
+      return this.generateUserToken(user);
     }
   }
 
@@ -113,7 +114,7 @@ export class UserService {
     }
   }
 
-  async forget(email: string): Promise<Boolean> {
+  async forget(email: string): Promise<boolean> {
     const user = await this.getUserByEmail(email);
     const rememberToken = suid(16);
     console.log(rememberToken);
@@ -122,7 +123,7 @@ export class UserService {
     return true;
   }
 
-  async reset(rememberToken: string, password: string): Promise<Boolean> {
+  async reset(rememberToken: string, password: string): Promise<boolean> {
     let user: UserEntity;
     try {
       user = await this.userRepository.findOneOrFail({ rememberToken });

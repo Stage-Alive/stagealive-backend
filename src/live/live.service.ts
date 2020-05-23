@@ -138,11 +138,7 @@ export class LiveService {
   ): Promise<Pagination<LiveEntity>> {
     const { page, limit, highlighted } = options;
 
-    const queryBuilder = this.liveRepository
-      .createQueryBuilder('lives')
-      .leftJoinAndSelect('lives.chats', 'chats')
-      .leftJoinAndSelect('chats.group', 'groups')
-      .leftJoinAndSelect('lives.artists', 'artists');
+    const queryBuilder = this.liveRepository.createQueryBuilder('lives');
 
     if (highlighted) {
       queryBuilder.where({ highlighted: highlighted });

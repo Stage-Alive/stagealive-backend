@@ -18,17 +18,19 @@ export class LiveService {
     private readonly groupService: GroupService,
   ) {}
 
+  // TO DO: review this implementation
   async show(id: string, userId: string): Promise<LiveEntity> {
     await this.watch(id, userId);
     try {
       return await this.liveRepository
         .createQueryBuilder('lives')
         .leftJoinAndSelect('lives.chats', 'chats')
+        .leftJoinAndSelect('chats.messages', 'messages')
+        .limit(10)
+        .orderBy('messages.created_at', 'DESC')
         .leftJoinAndSelect('chats.group', 'groups')
         .innerJoin('groups.users', 'users')
-        // .innerJoin('lives.users', 'users')
         .where('users.id = :id', { id: userId })
-        // .where('lives.users.id = :userId', { userId: userId })
         .where({ id })
         .orderBy('groups.created_at', 'DESC')
         .getOne();
@@ -147,7 +149,7 @@ export class LiveService {
     return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10 });
   }
 
-  async watch(id: string, userId: string): Promise<Boolean> {
+  async watch(id: string, userId: string): Promise<boolean> {
     try {
       await this.liveRepository
         .createQueryBuilder()

@@ -106,7 +106,7 @@ export class UserService {
 
   async getUserByEmail(email: string): Promise<UserEntity> {
     try {
-      return await this.userRepository.findOneOrFail({ email });
+      return await this.userRepository.findOneOrFail({ relations: ['userType'], where: { email: email } });
     } catch (error) {
       throw new NotFoundException();
     }

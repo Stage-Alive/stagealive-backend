@@ -7,10 +7,15 @@ import { UserService } from 'src/user/user.service';
 import { AuthInterface } from './auth.interface';
 import { ForgetDto } from './dtos/forget.dto';
 import { ResetDto } from './dtos/reset.dto';
+import { UserTypeService } from 'src/usertype/usertype.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService) {}
+  constructor(
+    private userService: UserService,
+    private userTypeService: UserTypeService,
+    private jwtService: JwtService,
+  ) {}
 
   async valideUser(data: Partial<AuthInterface>): Promise<UserEntity> {
     if (data.facebookId) {
@@ -35,7 +40,8 @@ export class AuthService {
   async loginFacebook(data: Partial<AuthInterface>) {
     const user = await this.valideUser(data);
     if (!user) {
-      data.userTypeId = ConfigConst.USER_TYPE_CONSUMER;
+      const userType = await this.userTypeService.getUserTypeRegular();
+      data.userTypeId = userType.id;
       return this.userService.store(data);
     }
     return this.generateUserToken(user);

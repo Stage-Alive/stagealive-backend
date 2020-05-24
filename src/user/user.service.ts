@@ -6,12 +6,14 @@ import { suid } from 'rand-token';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { UserInterface } from './user.interface';
+import { UserTypeService } from 'src/usertype/usertype.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private readonly userTypeService: UserTypeService,
     private jwtService: JwtService,
   ) {}
 
@@ -44,7 +46,11 @@ export class UserService {
         throw new BadRequestException('This email already exists on database');
       }
 
-      const user = await this.userRepository.create(body);
+      if (!body.userTypeId) {
+        body.userTypeId = (await this.userTypeService.getUserTypeRegular()).id;
+      }
+
+      const user = this.userRepository.create(body);
       await this.userRepository.save(user);
 
       return this.generateUserToken(user);

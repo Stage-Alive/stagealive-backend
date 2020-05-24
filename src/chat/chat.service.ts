@@ -25,10 +25,11 @@ export class ChatService {
 
   async show(id: string): Promise<ChatEntity> {
     try {
-      // const chat = await this.chatRepository.findOneOrFail(id, { relations: ['messages'] });
       return await this.chatRepository
         .createQueryBuilder('chats')
-        .leftJoinAndSelect('chats.messages', 'messages')
+        .select(['chats.id', 'messages.text', 'messages.createdAt', 'user.name'])
+        .leftJoin('chats.messages', 'messages')
+        .leftJoin('messages.user', 'user')
         .limit(10)
         .orderBy('messages.createdAt', 'DESC')
         .where({ id })

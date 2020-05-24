@@ -11,7 +11,7 @@ export class StoreUserDto {
   @ApiProperty({ description: 'The email of user', nullable: false })
   email: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ description: 'The type of user', nullable: false })
   userTypeId: string;
 

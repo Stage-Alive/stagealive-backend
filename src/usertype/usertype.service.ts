@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserTypeEntity } from './usertype.entity';
 import { Repository } from 'typeorm';
 import { UserTypeInterface } from './usertype.interface';
-import {
-  paginate,
-  Pagination,
-  IPaginationOptions,
-} from 'nestjs-typeorm-paginate';
+import { paginate, Pagination, IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserTypeService {
@@ -16,9 +12,7 @@ export class UserTypeService {
     private readonly userTypeRepository: Repository<UserTypeEntity>,
   ) {}
 
-  async paginate(
-    options: IPaginationOptions = { page: 1, limit: 10 },
-  ): Promise<Pagination<UserTypeEntity>> {
+  async paginate(options: IPaginationOptions = { page: 1, limit: 10 }): Promise<Pagination<UserTypeEntity>> {
     return await paginate<UserTypeEntity>(this.userTypeRepository, options);
   }
 
@@ -46,10 +40,7 @@ export class UserTypeService {
     }
   }
 
-  async update(
-    id: string,
-    body: Partial<UserTypeInterface>,
-  ): Promise<UserTypeEntity> {
+  async update(id: string, body: Partial<UserTypeInterface>): Promise<UserTypeEntity> {
     try {
       let user = await this.userTypeRepository.findOneOrFail(id);
       user = await this.userTypeRepository.merge(user, body);
@@ -76,5 +67,9 @@ export class UserTypeService {
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+  }
+
+  async getUserTypeRegular() {
+    return await this.userTypeRepository.findOne({ type: process.env.REGULAR_USER });
   }
 }

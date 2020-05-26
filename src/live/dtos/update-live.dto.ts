@@ -37,5 +37,5 @@ export class UpdateLiveDto {
   @IsBoolean()
   @IsOptional()
   @ApiProperty({ nullable: true, default: false })
-  highlighted: boolean;
+  highlighted: number;
 }

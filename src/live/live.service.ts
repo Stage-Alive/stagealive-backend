@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { ChatService } from 'src/chat/chat.service';
@@ -19,8 +19,10 @@ export class LiveService {
   ) {}
 
   // TO DO: review this implementation
-  async show(id: string, userId: string): Promise<LiveEntity> {
-    await this.watch(id, userId);
+  async show(id: string, userId?: string): Promise<LiveEntity> {
+    if (userId) {
+      await this.watch(id, userId);
+    }
     try {
       return await this.liveRepository
         .createQueryBuilder('lives')
@@ -35,7 +37,7 @@ export class LiveService {
         .orderBy('groups.created_at', 'DESC')
         .getOne();
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new NotFoundException(error);
     }
   }
 
@@ -132,6 +134,16 @@ export class LiveService {
       return await this.liveRepository.findOne(live.id);
     } catch (error) {
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async patchLive(id: string, body: Partial<LiveInterface>) {
+    try {
+      const live = await this.liveRepository.findOneOrFail(id);
+      live.highlighted = body.highlighted;
+      return await this.liveRepository.save(live);
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 

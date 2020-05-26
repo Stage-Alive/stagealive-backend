@@ -117,7 +117,7 @@ export class LiveEntity {
   description: string;
 
   @Column({ nullable: true, type: 'boolean', default: false })
-  highlighted: boolean;
+  highlighted: number;
 
   @Column({ name: 'invitation_id', length: 32 })
   invitationtId: string;

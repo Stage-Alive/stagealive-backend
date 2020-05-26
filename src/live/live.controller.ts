@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IndexQueryDto } from 'src/dtos-global/index-query.dto';
@@ -6,6 +19,7 @@ import { RestoreLiveDto } from './dtos/restore-live.dto';
 import { StoreLiveDto } from './dtos/store-live.dto';
 import { UpdateLiveDto } from './dtos/update-live.dto';
 import { LiveService } from './live.service';
+import { PatchLiveDto } from './dtos/patch-live.dto';
 
 @Controller('lives')
 @ApiTags('lives')
@@ -119,6 +133,19 @@ export class LiveController {
     const result = await this.liveService.watch(id, userId);
     return {
       message: 'Watching live',
+      object: 'live',
+      url: request.url,
+      data: result,
+    };
+  }
+
+  @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
+  async patchLive(@Param('id', new ParseUUIDPipe()) id: string, @Body() body: PatchLiveDto, @Req() request) {
+    const userId = request.user.id;
+    const result = await this.liveService.patchLive(id, body);
+    return {
+      message: 'Uptading (patch) live',
       object: 'live',
       url: request.url,
       data: result,

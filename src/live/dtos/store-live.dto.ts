@@ -39,8 +39,7 @@ export class StoreLiveDto {
   @ApiProperty({ nullable: false, maxLength: 30 })
   description: string;
 
-  @IsBoolean()
   @IsOptional()
   @ApiProperty({ nullable: true, default: false })
-  highlighted: boolean;
+  highlighted: number;
 }

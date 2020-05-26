@@ -15,5 +15,5 @@ export interface LiveInterface {
 
   description: string;
 
-  highlighted: boolean;
+  highlighted: number;
 }

@@ -28,8 +28,8 @@ export class ChatService {
       return await this.chatRepository
         .createQueryBuilder('chats')
         .select(['chats.id', 'messages.text', 'messages.createdAt', 'user.name'])
-        .leftJoin('chats.messages', 'messages')
-        .leftJoin('messages.user', 'user')
+        .innerJoin('chats.messages', 'messages')
+        .innerJoin('messages.user', 'user')
         .limit(10)
         .orderBy('messages.createdAt', 'ASC')
         .where({ id })

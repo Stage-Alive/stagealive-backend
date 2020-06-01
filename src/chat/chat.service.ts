@@ -31,7 +31,7 @@ export class ChatService {
         .leftJoin('chats.messages', 'messages')
         .leftJoin('messages.user', 'user')
         .limit(10)
-        .orderBy('messages.createdAt', 'ASC')
+        .orderBy('messages.createdAt', 'DESC')
         .where({ id })
         .getOne();
     } catch (error) {

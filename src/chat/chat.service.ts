@@ -25,7 +25,7 @@ export class ChatService {
 
   async show(id: string): Promise<ChatEntity> {
     try {
-      return await this.chatRepository
+      const chat = await this.chatRepository
         .createQueryBuilder('chats')
         .select(['chats.id', 'messages.text', 'messages.createdAt', 'user.name'])
         .leftJoin('chats.messages', 'messages')
@@ -34,6 +34,9 @@ export class ChatService {
         .orderBy('messages.createdAt', 'DESC')
         .where({ id })
         .getOne();
+      const messages = chat.messages.reverse();
+      chat.messages = messages;
+      return chat;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

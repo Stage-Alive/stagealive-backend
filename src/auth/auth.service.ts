@@ -30,9 +30,9 @@ export class AuthService {
   }
 
   async login(data: Partial<AuthInterface>) {
-    const user = await this.valideUser(data);
+    const user = await this.userService.valideUserPassword(data.email, data.password);
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid password or email');
     }
     return this.generateUserToken(user);
   }

@@ -7,6 +7,7 @@ import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 import { UserTypeService } from 'src/usertype/usertype.service';
 import { UserTypeEntity } from 'src/usertype/usertype.entity';
+import { MailSendgrid } from 'src/helpers/mail-sendgrid';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { UserTypeEntity } from 'src/usertype/usertype.entity';
     TypeOrmModule.forFeature([UserEntity, UserTypeEntity]),
   ],
   controllers: [UserController],
-  providers: [UserService, UserTypeService],
+  providers: [UserService, UserTypeService, MailSendgrid],
   exports: [UserService],
 })
 export class UserModule {}

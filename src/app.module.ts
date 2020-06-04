@@ -19,6 +19,7 @@ import { AppGateway } from './websocket/app.gateway';
 import { StorageModule } from './storage/storage.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigConst } from './constant/config.const';
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -41,6 +42,7 @@ import { ConfigConst } from './constant/config.const';
       secret: ConfigConst.JWT_SECRET,
       verifyOptions: { ignoreExpiration: true },
     }),
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppGateway],

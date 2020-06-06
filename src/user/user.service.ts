@@ -182,14 +182,14 @@ export class UserService {
                 <table border="0" width="100%" cellpadding="0" cellspacing="0" margin="0" aling="center">
                     <tr>
                         <td align="center" style="vertical-align: top">
-                            <img src="https://app.vlive.com.br/icons/vlive.svg" width="320px" height="auto" alt="logo vlive">
+                            <img src="https://vliveprod.s3-sa-east-1.amazonaws.com/Vlive+escuro.svg" width="80px" height="auto" alt="logo vlive">
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <table border="0" width="100%" cellpadding="0" margin="0" align="center" style="max-width: 520px; border-style:solid; border-color:#2F2F2F; border-top-left-radius: 4px; border-top-right-radius: 4px; border-width: medium" >
                                 <tr>
-                                    <td align="left" style="font-size: 15pt; color:#0091da; border-color:#2F2F2F; border-width: thin; vertical-align:top; padding: 35px">
+                                    <td align="left" style="font-size: 15pt; color:#aa528d; border-color:#2F2F2F; border-width: thin; vertical-align:top; padding: 35px">
                                         <h3 style="margin: 0; font-weight: bold;">Altere sua senha</h3>
     
                                         <table>
@@ -210,7 +210,7 @@ export class UserService {
                                             <tr>
                                                 <td align="center" style="text-align: left; padding-top: 12px">
                                                   <a href="${process.env.BASE_URL}/reset-password?token=${rememberToken}">
-                                                    <input type="submit" value="ACCESS MY ACCOUNT" style="color:#fdfdfd; font-size: 12pt; width: 280px; height: 42px; background: #0091da; border-radius: 4px; border: #0091da"/>
+                                                    <input type="submit" value="ACESSAR MINHA CONTA" style="color:#fdfdfd; font-size: 12pt; width: 280px; height: 42px; background: #aa528d; border-radius: 4px; border: #0091da"/>
                                                   </a>
                                                 </td>
                                             </tr>

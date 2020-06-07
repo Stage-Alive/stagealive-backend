@@ -1,12 +1,12 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { ChatService } from 'src/chat/chat.service';
+import { GroupService } from 'src/group/group.service';
 import { Repository } from 'typeorm';
 import { LiveEntity } from './live.entity';
-import { LiveInterface } from './live.interface';
 import { IndexLiveInterface } from './live.index.interface';
-import { GroupService } from 'src/group/group.service';
+import { LiveInterface } from './live.interface';
 import shortid = require('shortid');
 
 @Injectable()
@@ -20,22 +20,43 @@ export class LiveService {
 
   // TO DO: review this implementation
   async show(id: string, userId?: string): Promise<LiveEntity> {
-    if (userId) {
-      await this.watch(id, userId);
-    }
+    await this.watch(id, userId);
+    // SELECT lives.id as lives_id, groups.name as groups_name
+    // from
+    // lives
+    // inner join groups_lives on groups_lives.live_id = lives.id
+    // inner join groups on groups.id = groups_lives.group_id
+    // inner join groups_users on groups_users.group_id  = groups.id
+    // where lives.id = '1a4c6ba2-9075-44a1-ad5e-bd5b96fbc923'
+    // and groups_users.user_id = 'e9fd1b7f-e323-42f9-a7e2-b18c6fafc9f2'
+
     try {
-      return await this.liveRepository
+      // return await this.liveRepository
+      // .createQueryBuilder('lives')
+      // .leftJoinAndSelect('lives.chats', 'chats')
+      // .leftJoinAndSelect('chats.messages', 'messages')
+      // .limit(10)
+      // .orderBy('messages.created_at', 'DESC')
+      // .leftJoinAndSelect('chats.group', 'groups')
+      // .innerJoin('groups.users', 'users')
+      // .where('users.id = :id', { id: userId })
+      // .where({ id })
+      // .orderBy('groups.created_at', 'DESC')
+      // .getOne();
+      const live = await this.liveRepository
         .createQueryBuilder('lives')
-        .leftJoinAndSelect('lives.chats', 'chats')
+        .innerJoinAndSelect('lives.groups', 'groups')
+        .innerJoin('groups.users', 'users')
+        .innerJoinAndSelect('groups.chats', 'chats')
         .leftJoinAndSelect('chats.messages', 'messages')
         .limit(10)
         .orderBy('messages.created_at', 'DESC')
-        .leftJoinAndSelect('chats.group', 'groups')
-        .innerJoin('groups.users', 'users')
-        .where('users.id = :id', { id: userId })
-        .where({ id })
         .orderBy('groups.created_at', 'DESC')
+        .where('lives.id = :id', { id: id })
+        .andWhere('users.id = :userId', { userId: userId })
         .getOne();
+      console.log(live);
+      return live;
     } catch (error) {
       throw new NotFoundException(error);
     }
@@ -163,13 +184,20 @@ export class LiveService {
 
   async watch(id: string, userId: string): Promise<boolean> {
     try {
+      await this.groupService.subscribeInAllPublicGroups(userId, id);
+      // const allPublicGroups = await this.liveRepository
+      //   .createQueryBuilder('lives')
+      //   .select(['groups.id'])
+      //   .innerJoin('lives.groups', 'groups')
+      //   // .innerJoin(PublicGroupEntity, 'groups')
+      //   .getMany();
+      // console.log(allPublicGroups);
+
       await this.liveRepository
         .createQueryBuilder()
         .relation(LiveEntity, 'users')
         .of(id)
         .add(userId);
-
-      await this.groupService.subscribeInAllPublicGroups(userId, id);
     } catch (error) {
       if (error.code != 'ER_DUP_ENTRY') {
         throw new UnauthorizedException(error);

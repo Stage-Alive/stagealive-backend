@@ -20,7 +20,7 @@ export class GroupService {
 
   async show(id: string): Promise<GroupEntity> {
     try {
-      const group = await this.groupRepository.findOneOrFail(id);
+      const group = await this.groupRepository.findOneOrFail(id, { relations: ['users'] });
       return group;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -95,7 +95,8 @@ export class GroupService {
       .createQueryBuilder('groups')
       .leftJoin('groups.lives', 'lives')
       .where('lives.id = :liveId', { liveId: liveId })
-      .leftJoin(PublicGroupEntity, 'public_groups', 'public_groups.group_id = groups.id')
+      .innerJoin(PublicGroupEntity, 'public_groups', 'public_groups.group_id = groups.id')
+      .printSql()
       .getMany();
 
     allPublicGroups.map(async group => {

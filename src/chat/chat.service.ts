@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ChatEntity } from './chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -24,8 +24,9 @@ export class ChatService {
   }
 
   async show(id: string): Promise<ChatEntity> {
+    let chat;
     try {
-      const chat = await this.chatRepository
+      chat = await this.chatRepository
         .createQueryBuilder('chats')
         .select(['chats.id', 'messages.text', 'messages.createdAt', 'user.name'])
         .innerJoin('chats.messages', 'messages')
@@ -34,11 +35,16 @@ export class ChatService {
         .orderBy('messages.createdAt', 'DESC')
         .where({ id })
         .getOne();
-      const messages = chat.messages.reverse();
-      chat.messages = messages;
-      return chat;
+      if (chat) {
+        const messages = chat.messages.reverse();
+        chat.messages = messages;
+        return chat;
+      } else {
+        chat = await this.chatRepository.findOneOrFail(id, { relations: ['messages'] });
+        return chat;
+      }
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new NotFoundException(404);
     }
   }
 

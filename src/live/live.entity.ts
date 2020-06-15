@@ -107,10 +107,10 @@ export class LiveEntity {
   @Column({ name: 'start_at', type: 'datetime', nullable: false })
   startAt: string;
 
-  @Column({ name: 'main_banner', nullable: true })
+  @Column({ name: 'main_banner', nullable: false })
   mainBanner: string;
 
-  @Column({ name: 'secondary_banner', nullable: false })
+  @Column({ name: 'secondary_banner', nullable: true })
   secondaryBanner: string;
 
   @Column({ name: 'description', nullable: false, length: 30 })

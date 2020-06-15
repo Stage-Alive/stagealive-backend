@@ -1,6 +1,6 @@
 FROM node:12.11.1-alpine AS builder
 # Create app directory
-EXPOSE 8000
+EXPOSE 3000
 RUN mkdir /workspace
 WORKDIR /workspace
 COPY . .

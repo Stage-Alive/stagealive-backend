@@ -18,11 +18,11 @@ export class UpdateLiveDto {
   @ApiProperty({ nullable: false })
   startAt: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @ApiProperty({ nullable: true })
   mainBanner: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ nullable: false })
   secondaryBanner: string;
 

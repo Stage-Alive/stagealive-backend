@@ -31,31 +31,21 @@ export class LiveService {
     // and groups_users.user_id = 'e9fd1b7f-e323-42f9-a7e2-b18c6fafc9f2'
 
     try {
-      // return await this.liveRepository
-      // .createQueryBuilder('lives')
-      // .leftJoinAndSelect('lives.chats', 'chats')
-      // .leftJoinAndSelect('chats.messages', 'messages')
-      // .limit(10)
-      // .orderBy('messages.created_at', 'DESC')
-      // .leftJoinAndSelect('chats.group', 'groups')
-      // .innerJoin('groups.users', 'users')
-      // .where('users.id = :id', { id: userId })
-      // .where({ id })
-      // .orderBy('groups.created_at', 'DESC')
-      // .getOne();
       const live = await this.liveRepository
         .createQueryBuilder('lives')
         .innerJoinAndSelect('lives.groups', 'groups')
         .innerJoin('groups.users', 'users')
-        .innerJoinAndSelect('groups.chats', 'chats')
+        .leftJoinAndSelect('groups.chats', 'chats')
         .leftJoinAndSelect('chats.messages', 'messages')
-        .limit(10)
-        .orderBy('messages.created_at', 'DESC')
-        .orderBy('groups.created_at', 'DESC')
+        // .limit(10)
+        // .orderBy('messages.created_at', 'DESC')
+        // .orderBy('groups.created_at', 'DESC')
         .where('lives.id = :id', { id: id })
         .andWhere('users.id = :userId', { userId: userId })
+        .printSql()
         .getOne();
-      console.log(live);
+
+      // let chats = live.chats.map(async chat => {});
       return live;
     } catch (error) {
       throw new NotFoundException(error);
@@ -178,6 +168,7 @@ export class LiveService {
     if (highlighted) {
       queryBuilder.where({ highlighted: highlighted });
     }
+    queryBuilder.orderBy('lives.start_at', 'DESC');
 
     return await paginate<LiveEntity>(queryBuilder, { page: page || 1, limit: limit || 10 });
   }
@@ -185,13 +176,12 @@ export class LiveService {
   async watch(id: string, userId: string): Promise<boolean> {
     try {
       await this.groupService.subscribeInAllPublicGroups(userId, id);
-      // const allPublicGroups = await this.liveRepository
-      //   .createQueryBuilder('lives')
-      //   .select(['groups.id'])
-      //   .innerJoin('lives.groups', 'groups')
-      //   // .innerJoin(PublicGroupEntity, 'groups')
-      //   .getMany();
-      // console.log(allPublicGroups);
+
+      await this.liveRepository
+        .createQueryBuilder()
+        .relation(LiveEntity, 'users')
+        .of(id)
+        .remove(userId);
 
       await this.liveRepository
         .createQueryBuilder()

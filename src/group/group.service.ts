@@ -67,6 +67,12 @@ export class GroupService {
         .createQueryBuilder()
         .relation(GroupEntity, 'users')
         .of(id)
+        .remove(userId);
+
+      await this.groupRepository
+        .createQueryBuilder()
+        .relation(GroupEntity, 'users')
+        .of(id)
         .add(userId);
     } catch (error) {
       if (error.code != 'ER_DUP_ENTRY') {
@@ -99,8 +105,10 @@ export class GroupService {
       .printSql()
       .getMany();
 
-    allPublicGroups.map(async group => {
-      await this.subscribe(userId, group.id);
-    });
+    await Promise.all(
+      allPublicGroups.map(async group => {
+        await this.subscribe(userId, group.id);
+      }),
+    );
   }
 }

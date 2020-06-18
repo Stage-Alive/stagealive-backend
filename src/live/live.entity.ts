@@ -113,7 +113,7 @@ export class LiveEntity {
   @Column({ name: 'secondary_banner', nullable: true })
   secondaryBanner: string;
 
-  @Column({ name: 'description', nullable: false, length: 30 })
+  @Column({ name: 'description', nullable: false, length: 100 })
   description: string;
 
   @Column({ nullable: true, type: 'boolean', default: false })

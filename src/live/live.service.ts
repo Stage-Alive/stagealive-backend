@@ -18,17 +18,8 @@ export class LiveService {
     private readonly groupService: GroupService,
   ) {}
 
-  // TO DO: review this implementation
   async show(id: string, userId?: string): Promise<LiveEntity> {
     await this.watch(id, userId);
-    // SELECT lives.id as lives_id, groups.name as groups_name
-    // from
-    // lives
-    // inner join groups_lives on groups_lives.live_id = lives.id
-    // inner join groups on groups.id = groups_lives.group_id
-    // inner join groups_users on groups_users.group_id  = groups.id
-    // where lives.id = '1a4c6ba2-9075-44a1-ad5e-bd5b96fbc923'
-    // and groups_users.user_id = 'e9fd1b7f-e323-42f9-a7e2-b18c6fafc9f2'
 
     try {
       const live = await this.liveRepository
@@ -37,15 +28,11 @@ export class LiveService {
         .innerJoin('groups.users', 'users')
         .leftJoinAndSelect('groups.chats', 'chats')
         .leftJoinAndSelect('chats.messages', 'messages')
-        // .limit(10)
-        // .orderBy('messages.created_at', 'DESC')
-        // .orderBy('groups.created_at', 'DESC')
         .where('lives.id = :id', { id: id })
         .andWhere('users.id = :userId', { userId: userId })
         .printSql()
         .getOne();
 
-      // let chats = live.chats.map(async chat => {});
       return live;
     } catch (error) {
       throw new NotFoundException(error);
@@ -150,8 +137,8 @@ export class LiveService {
 
   async patchLive(id: string, body: Partial<LiveInterface>) {
     try {
-      const live = await this.liveRepository.findOneOrFail(id);
-      live.highlighted = body.highlighted;
+      let live = await this.liveRepository.findOneOrFail(id);
+      live = this.liveRepository.merge(live, body);
       return await this.liveRepository.save(live);
     } catch (error) {
       throw new NotFoundException(error);

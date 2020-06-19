@@ -13,4 +13,8 @@ export class PatchLiveDto {
   @IsOptional()
   @ApiProperty({ nullable: true })
   link: string;
+
+  @IsOptional()
+  @ApiProperty({ nullable: true })
+  mainBanner: string;
 }

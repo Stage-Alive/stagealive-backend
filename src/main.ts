@@ -8,15 +8,15 @@ import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  const options = new DocumentBuilder()
-    .setTitle('Stage Alive Services')
-    .setDescription('The Stage Alive Services API')
-    .setVersion(ConfigConst.API_VERSION)
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
-
+  if (process.env.NODE_ENV !== 'production') {
+    const options = new DocumentBuilder()
+      .setTitle('Stage Alive Services')
+      .setDescription('The Stage Alive Services API')
+      .setVersion(ConfigConst.API_VERSION)
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('api', app, document);
+  }
   app.useGlobalPipes(new ValidationPipe());
   app.useStaticAssets(join(__dirname, '..', 'static'));
   app.enableCors();
